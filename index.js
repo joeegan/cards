@@ -1,8 +1,8 @@
 'use strict';
 
 function buildDeck() {
-  return 'HSCD'.replace(/./g, (house) =>
-    'A123456789JQK'.replace(/(\w)/g, '$1' + house)
+  return 'HCDS'.replace(/./g, (house) =>
+    'A23456789TJQK'.replace(/(\w)/g, '$1' + house)
   ).match(/.{1,2}/g);
 }
 
@@ -28,9 +28,7 @@ class Deck {
   }
 
   overhandShuffle() {
-    let i = 0;
-    while(i < randomInt(5,100)) {
-      i++;
+    for (var i = 0; i < randomInt(5,100); i++) {
       // Take a hand of a random amount of cards from the bottom of the deck
       let hand = this.cards.splice(randomInt(1, 10));
       // Take a random amount of cards from the bottom the hand
@@ -40,6 +38,18 @@ class Deck {
       // Put the other hand on top
       this.cards = remainderHand.concat(this.cards);
     }
+    return this.cards;
+  }
+
+  riffleShuffle() {
+    const deckLength = this.cards.length;
+    const secondHalf = this.cards.splice(deckLength/2);
+    const firstHalf = this.cards.slice();
+    let newArray = [];
+    for (let j = 0; j < deckLength; j++) {
+      newArray.push((j % 2 == 0) ? firstHalf.shift() : secondHalf.shift());
+    }
+    this.cards = newArray;
     return this.cards;
   }
 

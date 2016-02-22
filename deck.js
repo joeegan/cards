@@ -53,11 +53,18 @@ function overhandShuffle(deck) {
 
 function riffleShuffle(deck) {
   const deckLength = deck.length;
-  const secondHalf = deck.splice(deck.length/2);
-  const firstHalf = deck.slice();
+  const firstHalf = deck.slice(0, deckLength/2);
+  const secondHalf = deck.slice(deckLength/2);
   const newDeck = [];
-  for (let i = 0; i < deckLength; i++) {
-    newDeck.push((i % 2 == 0) ? firstHalf.shift() : secondHalf.shift());
+  while(newDeck.length < deckLength) {
+    const amountOfCardsA = randomInt(1,2);
+    const amountOfCardsB = randomInt(1,2);
+    for (let j = 0; j < amountOfCardsB; j++) {
+      secondHalf.length && newDeck.push(secondHalf.shift());
+    }
+    for (let j = 0; j < amountOfCardsA; j++) {
+      firstHalf.length && newDeck.push(firstHalf.shift());
+    }
   }
   return newDeck;
 }

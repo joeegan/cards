@@ -1,6 +1,6 @@
 'use strict';
 
-module.exports = class Deck {
+module.exports.Deck = class {
 
   constructor() {
     this.cards = buildDeck();
@@ -24,8 +24,8 @@ module.exports = class Deck {
 }
 
 function buildDeck() {
-  return '♣♦♥♠'.replace(/./g, (house) =>
-    'A23456789TJQK'.replace(/(\w)/g, '$1' + house)
+  return '♣♦♥♠'.replace(/./g, (suit) =>
+    'A23456789TJQK'.replace(/(\w)/g, '$1' + suit)
   ).match(/.{1,2}/g);
 }
 
@@ -37,6 +37,10 @@ function randomItem(arr) {
   return arr[randomInt(0, arr.length - 1)];
 }
 
+/*
+ * Mimics the standard shuffling technique
+ * @param {[String]} deck Deck to push the cards into
+ */
 function overhandShuffle(deck) {
   for (var i = 0; i < 1000; i++) {
     // Take a hand of a random amount of cards from the bottom of the deck
@@ -51,20 +55,31 @@ function overhandShuffle(deck) {
   return deck;
 }
 
+/*
+ * Pushes a quantity of cards into another
+ * @param {[String]} cards The source of the cards to push
+ * @param {Number} quantity How many cards to take from each half
+ * @param {[String]} deck Deck to push the cards into
+ */
+function shiftHalf(cards, quantity, newDeck) {
+  for (let j = 0; j < quantity; j++) {
+    cards.length && newDeck.push(cards.shift());
+  }
+}
+
+/*
+ * Splits the deck in two, then merges the two halfs
+ * to form a new deck
+ * @param {[String]} deck The cards to split
+ */
 function riffleShuffle(deck) {
   const deckLength = deck.length;
   const firstHalf = deck.slice(0, deckLength/2);
   const secondHalf = deck.slice(deckLength/2);
   const newDeck = [];
   while(newDeck.length < deckLength) {
-    const amountOfCardsA = randomInt(1,2);
-    const amountOfCardsB = randomInt(1,2);
-    for (let j = 0; j < amountOfCardsB; j++) {
-      secondHalf.length && newDeck.push(secondHalf.shift());
-    }
-    for (let j = 0; j < amountOfCardsA; j++) {
-      firstHalf.length && newDeck.push(firstHalf.shift());
-    }
+    shiftHalf(secondHalf, randomInt(1,2), newDeck);
+    shiftHalf(firstHalf, randomInt(1,2), newDeck);
   }
   return newDeck;
 }

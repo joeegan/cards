@@ -1,4 +1,8 @@
 'use strict';
+var suits = require('./representation').suits;
+var sequence = require('./representation').sequence;
+var random = require('./random');
+var percentage = require('./percentage');
 
 module.exports.Deck = class {
 
@@ -24,17 +28,9 @@ module.exports.Deck = class {
 }
 
 function buildDeck() {
-  return '♣♦♥♠'.replace(/./g, (suit) =>
-    'A23456789TJQK'.replace(/(\w)/g, '$1' + suit)
+  return suits.replace(/./g, (suit) =>
+    sequence.replace(/(\w)/g, '$1' + suit)
   ).match(/.{1,2}/g);
-}
-
-function randomInt(min, max) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
-
-function randomItem(arr) {
-  return arr[randomInt(0, arr.length - 1)];
 }
 
 /*
@@ -44,9 +40,9 @@ function randomItem(arr) {
 function overhandShuffle(deck) {
   for (var i = 0; i < 1000; i++) {
     // Take a hand of a random amount of cards from the bottom of the deck
-    let hand = deck.splice(randomInt(1, 10));
+    let hand = deck.splice(random.int(1, 10));
     // Take a random amount of cards from the bottom the hand
-    let remainderHand = hand.splice(randomInt(1, 10));
+    let remainderHand = hand.splice(random.int(1, 10));
     // Put what remains of the hand at the top of the deck
     deck = hand.concat(deck);
     // Put the other hand on top
@@ -78,8 +74,8 @@ function riffleShuffle(deck) {
   const secondHalf = deck.slice(deckLength/2);
   const newDeck = [];
   while(newDeck.length < deckLength) {
-    shiftHalf(secondHalf, randomInt(1,2), newDeck);
-    shiftHalf(firstHalf, randomInt(1,2), newDeck);
+    shiftHalf(secondHalf, random.int(1,2), newDeck);
+    shiftHalf(firstHalf, random.int(1,2), newDeck);
   }
   return newDeck;
 }

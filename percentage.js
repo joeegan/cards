@@ -1,3 +1,1 @@
-module.exports = function(total, value) {
-  return +(value / total * 100).toFixed(2);
-}
+module.exports = (total, value) => +(value / total * 100).toFixed(2);

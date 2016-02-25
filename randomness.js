@@ -10,7 +10,6 @@ var suits = require('./representation').suits;
 function sequentialSequence(current, prev) {
   const currentIdx = sequence.indexOf(current);
   if (currentIdx == 0) {
-    // 'A' following 'K' returns true - TODO consider whether this is valuable
     return sequence.indexOf(prev) == sequence.length-1;
   } else {
     return (currentIdx - sequence.indexOf(prev)) == 1;
@@ -23,21 +22,14 @@ function sequentialSequence(current, prev) {
  */
 function nonSequential(deck) {
   let count = 0;
-  let previousSequence = deck[0][0];
-  let previousSuit = deck[0][1];
   for (let i = 1; i < deck.length; i++) {
-    const sequence = deck[i][0];
-    const suit = deck[i][1];
-    if (sequentialSequence(sequence, previousSequence)
-      && suit == previousSuit) {
-      count++;
+    if (sequentialSequence(deck[i][0], deck[i-1][0])
+        && deck[i][1] == deck[i-1][1]) {
+        count++;
     }
-    // TODO avoid state?
-    previousSuit = suit;
-    previousSequence = sequence;
   }
   const totalPossible = deck.length - suits.length;
   return percentage(totalPossible, totalPossible - count);
 }
 
-module.exports = {nonSequential};
+module.exports = { nonSequential };

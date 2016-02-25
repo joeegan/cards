@@ -1,8 +1,8 @@
 'use strict';
 
 jest.autoMockOff();
-const Deck = require('../deck').Deck;
-const randomness = require('../randomness');
+const Deck = require('../src/deck').Deck;
+const randomness = require('../src/randomness');
 const nonSequential = randomness.nonSequential;
 let deck;
 

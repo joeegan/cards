@@ -1,0 +1,1223 @@
+[
+  {
+    "__docId__": 0,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/deck.js",
+    "memberof": null,
+    "longname": "src/deck.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "'use strict';\nvar suits = require('./representation').suits;\nvar sequence = require('./representation').sequence;\nvar random = require('./random');\nvar percentage = require('./percentage');\n\nmodule.exports.Deck = class {\n\n  constructor() {\n    this.cards = buildDeck();\n  }\n\n  hitMe() {\n    if (!this.cards.length) {\n      throw 'Sorry, no cards left';\n    }\n    return this.cards.pop();\n  }\n\n  riffleShuffle() {\n    return this.cards = riffleShuffle(this.cards);\n  }\n\n  overhandShuffle() {\n    return this.cards = overhandShuffle(this.cards);\n  }\n\n}\n\nfunction buildDeck() {\n  return suits.replace(/./g, (suit) =>\n    sequence.replace(/(\\w)/g, '$1' + suit)\n  ).match(/.{1,2}/g);\n}\n\n/*\n * Mimics the standard shuffling technique\n * @param {[String]} deck Deck to push the cards into\n */\nfunction overhandShuffle(deck) {\n  for (var i = 0; i < 1000; i++) {\n    // Take a hand of a random amount of cards from the bottom of the deck\n    let hand = deck.splice(random.int(1, 10));\n    // Take a random amount of cards from the bottom the hand\n    let remainderHand = hand.splice(random.int(1, 10));\n    // Put what remains of the hand at the top of the deck\n    deck = hand.concat(deck);\n    // Put the other hand on top\n    deck = remainderHand.concat(deck);\n  }\n  return deck;\n}\n\n/*\n * Pushes a quantity of cards into another\n * @param {[String]} cards The source of the cards to push\n * @param {Number} quantity How many cards to take from each half\n * @param {[String]} deck Deck to push the cards into\n */\nfunction shiftHalf(cards, quantity, newDeck) {\n  for (let j = 0; j < quantity; j++) {\n    cards.length && newDeck.push(cards.shift());\n  }\n}\n\n/*\n * Splits the deck in two, then merges the two halfs\n * to form a new deck\n * @param {[String]} deck The cards to split\n */\nfunction riffleShuffle(deck) {\n  const deckLength = deck.length;\n  const firstHalf = deck.slice(0, deckLength/2);\n  const secondHalf = deck.slice(deckLength/2);\n  const newDeck = [];\n  while(newDeck.length < deckLength) {\n    shiftHalf(secondHalf, random.int(1,2), newDeck);\n    shiftHalf(firstHalf, random.int(1,2), newDeck);\n  }\n  return newDeck;\n}\n"
+  },
+  {
+    "__docId__": 1,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "suits",
+    "memberof": "src/deck.js",
+    "longname": "src/deck.js~suits",
+    "access": null,
+    "export": false,
+    "importPath": "cards/src/deck.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 2,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 2,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "sequence",
+    "memberof": "src/deck.js",
+    "longname": "src/deck.js~sequence",
+    "access": null,
+    "export": false,
+    "importPath": "cards/src/deck.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 3,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "random",
+    "memberof": "src/deck.js",
+    "longname": "src/deck.js~random",
+    "access": null,
+    "export": false,
+    "importPath": "cards/src/deck.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 4,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "percentage",
+    "memberof": "src/deck.js",
+    "longname": "src/deck.js~percentage",
+    "access": null,
+    "export": false,
+    "importPath": "cards/src/deck.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 5,
+    "kind": "class",
+    "static": true,
+    "variation": null,
+    "name": "Deck",
+    "memberof": "src/deck.js",
+    "longname": "src/deck.js~Deck",
+    "access": null,
+    "export": false,
+    "importPath": "cards/src/deck.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 7,
+    "undocument": true,
+    "interface": false
+  },
+  {
+    "__docId__": 6,
+    "kind": "constructor",
+    "static": false,
+    "variation": null,
+    "name": "constructor",
+    "memberof": "src/deck.js~Deck",
+    "longname": "src/deck.js~Deck#constructor",
+    "access": null,
+    "description": null,
+    "lineNumber": 9,
+    "undocument": true,
+    "params": [],
+    "generator": false
+  },
+  {
+    "__docId__": 7,
+    "kind": "member",
+    "static": false,
+    "variation": null,
+    "name": "cards",
+    "memberof": "src/deck.js~Deck",
+    "longname": "src/deck.js~Deck#cards",
+    "access": null,
+    "description": null,
+    "lineNumber": 10,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 8,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "hitMe",
+    "memberof": "src/deck.js~Deck",
+    "longname": "src/deck.js~Deck#hitMe",
+    "access": null,
+    "description": null,
+    "lineNumber": 13,
+    "undocument": true,
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 9,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "riffleShuffle",
+    "memberof": "src/deck.js~Deck",
+    "longname": "src/deck.js~Deck#riffleShuffle",
+    "access": null,
+    "description": null,
+    "lineNumber": 20,
+    "undocument": true,
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 10,
+    "kind": "method",
+    "static": false,
+    "variation": null,
+    "name": "overhandShuffle",
+    "memberof": "src/deck.js~Deck",
+    "longname": "src/deck.js~Deck#overhandShuffle",
+    "access": null,
+    "description": null,
+    "lineNumber": 24,
+    "undocument": true,
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 11,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "buildDeck",
+    "memberof": "src/deck.js",
+    "longname": "src/deck.js~buildDeck",
+    "access": null,
+    "export": false,
+    "importPath": "cards/src/deck.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 30,
+    "undocument": true,
+    "params": [],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 12,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "overhandShuffle",
+    "memberof": "src/deck.js",
+    "longname": "src/deck.js~overhandShuffle",
+    "access": null,
+    "export": false,
+    "importPath": "cards/src/deck.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 40,
+    "undocument": true,
+    "params": [
+      {
+        "name": "deck",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 13,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "shiftHalf",
+    "memberof": "src/deck.js",
+    "longname": "src/deck.js~shiftHalf",
+    "access": null,
+    "export": false,
+    "importPath": "cards/src/deck.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 60,
+    "undocument": true,
+    "params": [
+      {
+        "name": "cards",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "quantity",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "newDeck",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "generator": false
+  },
+  {
+    "__docId__": 14,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "riffleShuffle",
+    "memberof": "src/deck.js",
+    "longname": "src/deck.js~riffleShuffle",
+    "access": null,
+    "export": false,
+    "importPath": "cards/src/deck.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 71,
+    "undocument": true,
+    "params": [
+      {
+        "name": "deck",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 15,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/percentage.js",
+    "memberof": null,
+    "longname": "src/percentage.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 4,
+    "content": "/*\n * @return The value as a percentage of the total\n */\nmodule.exports = (total, value) => +(value / total * 100).toFixed(2);\n"
+  },
+  {
+    "__docId__": 16,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/random.js",
+    "memberof": null,
+    "longname": "src/random.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "module.exports = {\n\n  /*\n   * @return A random integer from the provided range\n   */\n  int: (min, max) => Math.floor(Math.random() * (max - min + 1) + min),\n\n  /*\n   * @return A random item from an array\n   */\n  item: (arr) => arr[randomInt(0, arr.length - 1)],\n\n}\n"
+  },
+  {
+    "__docId__": 17,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/randomness.js",
+    "memberof": null,
+    "longname": "src/randomness.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "'use strict';\n\nvar percentage = require('./percentage');\nvar sequence = require('./representation').sequence;\nvar suits = require('./representation').suits;\n\n/**\n * Determines whether 'T' is after '9' or 'K' is after 'Q'\n */\nfunction sequentialSequence(current, prev) {\n  const currentIdx = sequence.indexOf(current);\n  if (currentIdx == 0) {\n    return sequence.indexOf(prev) == sequence.length-1;\n  } else {\n    return (currentIdx - sequence.indexOf(prev)) == 1;\n  }\n}\n\n/**\n * Returns the percentage of the cards in the pack that\n * are in their original order\n */\nfunction nonSequential(deck) {\n  let count = 0;\n  for (let i = 1; i < deck.length; i++) {\n    if (sequentialSequence(deck[i][0], deck[i-1][0])\n        && deck[i][1] == deck[i-1][1]) {\n        count++;\n    }\n  }\n  const totalPossible = deck.length - suits.length;\n  return percentage(totalPossible, totalPossible - count);\n}\n\nmodule.exports = { nonSequential };\n"
+  },
+  {
+    "__docId__": 18,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "percentage",
+    "memberof": "src/randomness.js",
+    "longname": "src/randomness.js~percentage",
+    "access": null,
+    "export": false,
+    "importPath": "cards/src/randomness.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 3,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 19,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "sequence",
+    "memberof": "src/randomness.js",
+    "longname": "src/randomness.js~sequence",
+    "access": null,
+    "export": false,
+    "importPath": "cards/src/randomness.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 4,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 20,
+    "kind": "variable",
+    "static": true,
+    "variation": null,
+    "name": "suits",
+    "memberof": "src/randomness.js",
+    "longname": "src/randomness.js~suits",
+    "access": null,
+    "export": false,
+    "importPath": "cards/src/randomness.js",
+    "importStyle": null,
+    "description": null,
+    "lineNumber": 5,
+    "undocument": true,
+    "type": {
+      "types": [
+        "*"
+      ]
+    }
+  },
+  {
+    "__docId__": 21,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "sequentialSequence",
+    "memberof": "src/randomness.js",
+    "longname": "src/randomness.js~sequentialSequence",
+    "access": null,
+    "export": false,
+    "importPath": "cards/src/randomness.js",
+    "importStyle": null,
+    "description": "Determines whether 'T' is after '9' or 'K' is after 'Q'",
+    "lineNumber": 10,
+    "params": [
+      {
+        "name": "current",
+        "types": [
+          "*"
+        ]
+      },
+      {
+        "name": "prev",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 22,
+    "kind": "function",
+    "static": true,
+    "variation": null,
+    "name": "nonSequential",
+    "memberof": "src/randomness.js",
+    "longname": "src/randomness.js~nonSequential",
+    "access": null,
+    "export": false,
+    "importPath": "cards/src/randomness.js",
+    "importStyle": null,
+    "description": "Returns the percentage of the cards in the pack that\nare in their original order",
+    "lineNumber": 23,
+    "params": [
+      {
+        "name": "deck",
+        "types": [
+          "*"
+        ]
+      }
+    ],
+    "return": {
+      "types": [
+        "*"
+      ]
+    },
+    "generator": false
+  },
+  {
+    "__docId__": 23,
+    "kind": "file",
+    "static": true,
+    "variation": null,
+    "name": "src/representation.js",
+    "memberof": null,
+    "longname": "src/representation.js",
+    "access": null,
+    "description": null,
+    "lineNumber": 1,
+    "content": "module.exports = {\n  suits: '♤♡♢♧',\n  sequence: 'A23456789TJQK'\n}\n"
+  },
+  {
+    "__docId__": 25,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Infinity",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Infinity",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Infinity",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 26,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "NaN",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/NaN",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~NaN",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 27,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "undefined",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/undefined",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~undefined",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 28,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "null",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/null",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~null",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 29,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 30,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "object",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~object",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 31,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 32,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "function",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~function",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 33,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 34,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "boolean",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~boolean",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 35,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Symbol",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Symbol",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Symbol",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 36,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Error",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Error",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 37,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "EvalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/EvalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~EvalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 38,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "InternalError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/InternalError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~InternalError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 39,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "RangeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RangeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RangeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 40,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "ReferenceError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ReferenceError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ReferenceError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 41,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "SyntaxError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SyntaxError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~SyntaxError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 42,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "TypeError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/TypeError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~TypeError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 43,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "URIError",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/URIError",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~URIError",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 44,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 45,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "number",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~number",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 46,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Date",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Date",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 47,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "String",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~String",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 48,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "string",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~string",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 49,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "RegExp",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/RegExp",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~RegExp",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 50,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 51,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 52,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint8Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 53,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint8ClampedArray",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint8ClampedArray",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint8ClampedArray",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 54,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 55,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint16Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint16Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint16Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 56,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Int32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Int32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Int32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 57,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Uint32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Uint32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Uint32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 58,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Float32Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float32Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float32Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 59,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Float64Array",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Float64Array",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Float64Array",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 60,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Map",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Map",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Map",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 61,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Set",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Set",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 62,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "WeakMap",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakMap",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakMap",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 63,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "WeakSet",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/WeakSet",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~WeakSet",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 64,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "ArrayBuffer",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/ArrayBuffer",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~ArrayBuffer",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 65,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "DataView",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/DataView",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~DataView",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 66,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "JSON",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~JSON",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 67,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Promise",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Promise",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 68,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Generator",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Generator",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Generator",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 69,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "GeneratorFunction",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/GeneratorFunction",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~GeneratorFunction",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 70,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Reflect",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Reflect",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Reflect",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 71,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Proxy",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy",
+    "memberof": "BuiltinExternal/ECMAScriptExternal.js",
+    "longname": "BuiltinExternal/ECMAScriptExternal.js~Proxy",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 73,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "CanvasRenderingContext2D",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/CanvasRenderingContext2D",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~CanvasRenderingContext2D",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 74,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "DocumentFragment",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/DocumentFragment",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~DocumentFragment",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 75,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Element",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Element",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Element",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 76,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Event",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Event",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Event",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 77,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "Node",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/Node",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~Node",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 78,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "NodeList",
+    "externalLink": "https://developer.mozilla.org/en-US/docs/Web/API/NodeList",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~NodeList",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 79,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "XMLHttpRequest",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/XMLHttpRequest",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~XMLHttpRequest",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  },
+  {
+    "__docId__": 80,
+    "kind": "external",
+    "static": true,
+    "variation": null,
+    "name": "AudioContext",
+    "externalLink": "https://developer.mozilla.org/en/docs/Web/API/AudioContext",
+    "memberof": "BuiltinExternal/WebAPIExternal.js",
+    "longname": "BuiltinExternal/WebAPIExternal.js~AudioContext",
+    "access": null,
+    "description": "",
+    "builtinExternal": true
+  }
+]

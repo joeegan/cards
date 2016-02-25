@@ -21,7 +21,7 @@ function sequentialSequence(current, prev) {
  * Returns the percentage of the cards in the pack that
  * are in their original order
  */
-function sequentialCardsPercentage(deck) {
+function nonSequential(deck) {
   let count = 0;
   let previousSequence = deck[0][0];
   let previousSuit = deck[0][1];
@@ -40,4 +40,4 @@ function sequentialCardsPercentage(deck) {
   return percentage(totalPossible, totalPossible - count);
 }
 
-module.exports = sequentialCardsPercentage;
+module.exports = {nonSequential};

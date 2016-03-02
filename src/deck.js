@@ -1,6 +1,6 @@
 'use strict';
 var suits = require('./representation').suits;
-var sequence = require('./representation').sequence;
+var rank = require('./representation').rank;
 var random = require('./random');
 var percentage = require('./percentage');
 
@@ -29,7 +29,7 @@ module.exports.Deck = class {
 
 function buildDeck() {
   return suits.replace(/./g, (suit) =>
-    sequence.replace(/(\w)/g, '$1' + suit)
+    rank.replace(/(\w)/g, '$1' + suit)
   ).match(/.{1,2}/g);
 }
 

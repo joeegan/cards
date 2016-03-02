@@ -1,7 +1,7 @@
 'use strict';
 
 var percentage = require('./percentage');
-var sequence = require('./representation').sequence;
+var rank = require('./representation').rank;
 var suits = require('./representation').suits;
 
 /**

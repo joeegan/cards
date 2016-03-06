@@ -3,10 +3,12 @@ var suits = require('./representation').suits;
 var rank = require('./representation').rank;
 var random = require('./random');
 var percentage = require('./percentage');
+const EventEmitter = require('events');
 
-module.exports.Deck = class {
+module.exports.Deck = class extends EventEmitter {
 
   constructor() {
+    super();
     this.cards = buildDeck();
   }
 
@@ -17,8 +19,25 @@ module.exports.Deck = class {
     return this.cards.pop();
   }
 
+  /*
+   * Splits the deck in two, then merges the two halfs
+   * to form a new deck
+   */
   riffleShuffle() {
-    return this.cards = riffleShuffle(this.cards);
+    const deckLength = this.cards.length;
+    const firstHalf = this.cards.slice(0, deckLength/2);
+    const secondHalf = this.cards.slice(deckLength/2);
+    this.emit('deckHalved', firstHalf, secondHalf);
+    const newDeck = [];
+    while(newDeck.length < deckLength) {
+      let rand = random.int(1,2);
+      shiftHalf(secondHalf, rand, newDeck);
+      this.emit('secondHalfPush');
+      rand = random.int(1,2);
+      shiftHalf(firstHalf, rand, newDeck);
+      this.emit('firstHalfPush');
+    }
+    return this.cards = newDeck;
   }
 
   overhandShuffle() {
@@ -61,21 +80,4 @@ function shiftHalf(cards, quantity, newDeck) {
   for (let j = 0; j < quantity; j++) {
     cards.length && newDeck.push(cards.shift());
   }
-}
-
-/*
- * Splits the deck in two, then merges the two halfs
- * to form a new deck
- * @param {[String]} deck The cards to split
- */
-function riffleShuffle(deck) {
-  const deckLength = deck.length;
-  const firstHalf = deck.slice(0, deckLength/2);
-  const secondHalf = deck.slice(deckLength/2);
-  const newDeck = [];
-  while(newDeck.length < deckLength) {
-    shiftHalf(secondHalf, random.int(1,2), newDeck);
-    shiftHalf(firstHalf, random.int(1,2), newDeck);
-  }
-  return newDeck;
 }

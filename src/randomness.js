@@ -21,9 +21,15 @@ function sequentialSequence(current, prev) {
  * are in their original order
  */
 function nonSequential(deck) {
-  let count = deck.reduce((count, card, i, deck) =>
-    +(sequentialSequence(deck[i+1], deck[i][0]) && deck[i+1][1] == deck[i][1])
-  , 0);
+  let count = deck.reduce((count, card, i, deck) => {
+    let nextCard = deck[i+1];
+    if (!nextCard) {
+      return count;
+    }
+    let isSequential = sequentialSequence(card[0], deck[i+1][0]);
+    let isSameSuit = card[1] === deck[i+1][1];
+    return count + +(isSequential && isSameSuit);
+  }, 0);
   const totalPossible = deck.length - suits.length;
   return percentage(totalPossible, totalPossible - count);
 }

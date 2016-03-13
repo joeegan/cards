@@ -1,6 +1,7 @@
 import unicode from './unicode';
 import $ from 'jquery';
 import { Deck } from './deck';
+import { nonSequential } from './randomness';
 
 const suits = {
   '♤': "spade",
@@ -34,12 +35,11 @@ let cards = D.cards;
 window.onload = () => {
   renderCards(cards);
   document.body.addEventListener('click', () => {
-    moveCards(D.riffleShuffle(cards));
+    D.riffleShuffle(cards);
   });
   D.on('deckHalved', (firstHalf, secondHalf) => {
-    console.log(firstHalf);
-    firstHalf.forEach((card) => {
-      $(`#${card}`).css('border', '1px solid black');
+    secondHalf.forEach((card) => {
+      $(`#${card}`).addClass('split');
     });
     console.log('an event occurred!');
   });

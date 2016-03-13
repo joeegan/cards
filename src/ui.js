@@ -41,6 +41,5 @@ window.onload = () => {
     secondHalf.forEach((card) => {
       $(`#${card}`).addClass('split');
     });
-    console.log('an event occurred!');
   });
 };

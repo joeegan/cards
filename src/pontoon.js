@@ -30,33 +30,42 @@ function playAgain() {
       clear();
       begin();
     } else {
-      exit();
+      repl.close();
     }
   });
+}
+
+function stillInPlay(hand, otherHand) {
+  var total = Deck.score(hand.cards);
+  if (total == 21) {
+    log(`${hand.name} got 21!`);
+    log(`${hand.name} won the game with`, hand.cards);
+    return false;
+  } else if (total > 21) {
+    log(`${hand.name} is busted ${total}, ${hand.cards}`);
+    log(`${otherHand.name} wins with: ${otherHand.cards} (${Deck.score(otherHand.cards)})`);
+    return false;
+  } else if (total < 21) {
+    return true;
+  }
 }
 
 function stickOrTwist() {
   repl.question(`Stick or twist with ${playerHand.cards} (${Deck.score(playerHand.cards)}) ?\n >`, (answer) => {
     if (answer == 'twist') {
       playerHand.push(deck.pop());
-      var total = Deck.score(playerHand.cards);
-      if (total == 21) {
-        log(`You've got 21!`);
-        log(`You've won the game with`, playerHand.cards);
-      } else if (total > 21) {
-        log(`You are busted as you have ${total}, ${playerHand.cards}`);
-        log(`The computer has won with: ${computerHand.cards} (${Deck.score(computerHand.cards)})`);
-      } else if (total < 21) {
+      if (stillInPlay(playerHand, computerHand)) {
         computerHand.push(deck.pop());
         stickOrTwist();
-      }
+      };
       playAgain();
     } else if (answer == 'stick') {
-      // AI should decide whether to stick or twist
-      if (Math.round(Math.random())) {
+      if (Deck.score(computerHand.cards) < 16) {
+        log('The computer has decided to twist too');
         computerHand.push(deck.pop());
-        // TODO...
       }
+      stillInPlay(computerHand, playerHand);
+      playAgain();
     }
   });
 }

@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest"
+    "test": "jest",
+    "start": "babel-node --presets es2015 src/pontoon.js"
   },
   "author": "",
   "license": "ISC",
@@ -16,5 +17,8 @@
     "esdoc": "^0.4.5",
     "jest-cli": "^0.8.2",
     "jquery": "^2.2.1"
+  },
+  "dependencies": {
+    "chalk": "^1.1.1"
   }
 }

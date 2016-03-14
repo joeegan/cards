@@ -1,11 +1,12 @@
 import Hand from './hand'
 import _repl from './repl'
-import {log, color} from './log'
+import {Log, color} from './log'
 import { Deck } from './deck'
 import chalk from 'chalk'
 
 const repl = _repl('Pontoon');
 const deck = new Deck();
+const log = new Log(repl);
 
 let playerHand;
 let computerHand;
@@ -16,15 +17,20 @@ function begin() {
   deck.riffleShuffle(999);
   playerHand = new Hand('You');
   computerHand = new Hand('Computer');
-  playerHand.on('log', (message, cards) => log(message + ' ' + cards));
-  computerHand.on('log', (message) => log(message));
+  playerHand.on('log', (message, cards) => log.write(message + ' ' + cards));
+  computerHand.on('log', (message) => log.write(message));
   playerHand.name = chalk.blue(playerHand.name);
   computerHand.name = chalk.gray(computerHand.name);
-  log(`${chalk.green('Welcome to Pontoon.')}`);
+  log.write(`${chalk.green('Welcome to Pontoon.')}`);
   playerHand.push(deck.pop());
   computerHand.push(deck.pop());
   playerHand.push(deck.pop());
   computerHand.push(deck.pop());
+  if (stillInPlay(computerHand, playerHand)) {
+    stickOrTwist();
+  } else {
+    playAgain();
+  }
   stickOrTwist();
 }
 
@@ -42,12 +48,12 @@ function playAgain() {
 function stillInPlay(hand, otherHand) {
   var total = Deck.score(hand.cards);
   if (total == 21) {
-    log(`${hand.name} got 21! :triumph:`);
-    log(`${hand.name} won the game with`, hand.cards);
+    log.write(`${hand.name} got 21! :triumph:`);
+    log.write(`${hand.name} won the game with`, hand.cards);
     return false;
   } else if (total > 21) {
-    log(`${hand.name} ${chalk.red('is busted')} with ${total}, ${hand.cards}`);
-    log(`${otherHand.name} ${chalk.green('wins')} with: ${otherHand.cards} (${Deck.score(otherHand.cards)})`);
+    log.write(`${hand.name} ${chalk.red('is busted')} with ${total}, ${hand.cards}`);
+    log.write(`${otherHand.name} ${chalk.green('wins')} with: ${otherHand.cards} (${Deck.score(otherHand.cards)})`);
     return false;
   } else if (total < 21) {
     return true;
@@ -64,9 +70,18 @@ function stickOrTwist() {
       };
       playAgain();
     } else if (answer == 'stick') {
+      playerHand.stuck = true;
       if (Deck.score(computerHand.cards) < 16) {
-        log(`${computerHand.name} has decided to twist too`);
+        log.write(`${computerHand.name} has decided to twist too`);
         computerHand.push(deck.pop());
+        if (stillInPlay(computerHand, playerHand)) {
+          stickOrTwist();
+        } else {
+          playAgain();
+        }
+      } else {
+        playerHand.stuck = true;
+        log.write(`${computerHand.name} has decided to stick`);
         if (stillInPlay(computerHand, playerHand)) {
           stickOrTwist();
         } else {

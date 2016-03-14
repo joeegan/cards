@@ -1,21 +1,45 @@
-// module.exports = function log(msg) {
-//   var arr = msg.split('');
-//   (function loop() {
-//     setTimeout(() => {
-//       var next = arr.shift();
-//       repl.write(next);
-//       if (next) {
-//         loop();
-//       } else {
-//         repl.prompt();
-//       }
-//     }, 50);
-//   })();
-// }
-import chalk from 'chalk'
+import chalk from 'chalk';
 
-function log(msg) {
-  console.log(color(msg));
+var BlueBirdQueue = require('bluebird-queue'),
+    Promise = require('bluebird');
+
+class Log {
+
+  constructor(repl) {
+    this.repl = repl;
+    this.queue = [];
+    this.uninitiated = true;
+    this.queue = new BlueBirdQueue({
+      concurrency: 1
+    })
+    this.queue.start();
+  }
+
+  write(msg) {
+    console.log(msg);
+    // this.queue.add(this.delayed(msg, this.repl));
+  }
+
+  delayed(msg, repl) {
+    return new Promise(function(resolve, reject) {
+      var arr = msg.split('');
+      (function loop() {
+        setTimeout(() => {
+          var next = arr.shift();
+          if (next) {
+            next = color(next);
+          }
+          repl.write(next);
+          if (next) {
+            loop();
+          } else {
+            resolve();
+          }
+        }, 50);
+      })();
+    });
+  }
+
 }
 
 function color(str) {
@@ -25,4 +49,4 @@ function color(str) {
             .replace('♤', chalk.gray('♤'));
 }
 
-module.exports = {log, color}
+module.exports = {Log, color}

@@ -28,8 +28,7 @@ module.exports = class hand extends EventEmitter {
   push(card) {
     var a = this.cards.length ? 'another' : 'a';
     this.cards.push(card);
-    this.emit('log', `${this.name} ${this.haveHas} been dealt ${a} card`,
-      this.revealHand ? `${card}` : null);
+    this.emit('log', `${this.name} ${this.haveHas} been dealt ${a} card ${this.revealHand ? card : ''}`);
   }
 
 }

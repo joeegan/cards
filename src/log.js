@@ -1,26 +1,34 @@
 import chalk from 'chalk';
-
-var BlueBirdQueue = require('bluebird-queue'),
-    Promise = require('bluebird');
+import random from './random';
 
 class Log {
 
   constructor(repl) {
     this.repl = repl;
     this.queue = [];
-    this.uninitiated = true;
-    this.queue = new BlueBirdQueue({
-      concurrency: 1
-    })
-    this.queue.start();
+    this.inProgress = false;
+  }
+
+  async run() {
+    for (let p of this.queue) {
+      this.inProgress = true;
+      await p();
+    }
+    this.queue = [];
   }
 
   write(msg) {
     console.log(msg);
-    // this.queue.add(this.delayed(msg, this.repl));
+    // if (!this.inProgress) {
+    //   this.queue.push(this.writeLine.bind(this, msg));
+    //   this.run();
+    // } else {
+    //   this.queue.push(this.writeLine.bind(this, msg));
+    // }
   }
 
-  delayed(msg, repl) {
+  writeLine(msg) {
+    let repl = this.repl;
     return new Promise(function(resolve, reject) {
       var arr = msg.split('');
       (function loop() {
@@ -33,9 +41,10 @@ class Log {
           if (next) {
             loop();
           } else {
+            console.log(); // line break
             resolve();
           }
-        }, 50);
+        }, random.int(1, 5) * 1);
       })();
     });
   }

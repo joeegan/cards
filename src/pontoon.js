@@ -17,7 +17,7 @@ function begin() {
   deck.riffleShuffle(999);
   playerHand = new Hand('You');
   computerHand = new Hand('Computer');
-  playerHand.on('log', (message, cards) => log.write(message + ' ' + cards));
+  playerHand.on('log', (message) => log.write(message));
   computerHand.on('log', (message) => log.write(message));
   playerHand.name = chalk.blue(playerHand.name);
   computerHand.name = chalk.gray(computerHand.name);
@@ -35,7 +35,7 @@ function begin() {
 }
 
 function playAgain() {
-  repl.question(`Play again? (${chalk.green('yes')} or ${chalk.red('no')})\n >`, (answer) => {
+  repl.question(`Play again? (${chalk.green('yes')} or ${chalk.red('no')})\n>`, (answer) => {
     if (answer.match(/^[yY]/)) {
       clear();
       begin();
@@ -49,7 +49,7 @@ function stillInPlay(hand, otherHand) {
   var total = Deck.score(hand.cards);
   if (total == 21) {
     log.write(`${hand.name} got 21! :triumph:`);
-    log.write(`${hand.name} won the game with`, hand.cards);
+    log.write(`${hand.name} won the game with ${hand.cards}`);
     return false;
   } else if (total > 21) {
     log.write(`${hand.name} ${chalk.red('is busted')} with ${total}, ${hand.cards}`);
@@ -61,8 +61,8 @@ function stillInPlay(hand, otherHand) {
 }
 
 function stickOrTwist() {
-  repl.question(`Stick or twist with ${color(playerHand.cards.join())} (${Deck.score(playerHand.cards)}) ?\n >`, (answer) => {
-    if (answer == 'twist') {
+  repl.question(`Stick or twist with ${color(playerHand.cards.join())} (${Deck.score(playerHand.cards)})?\n>`, (answer) => {
+    if (answer.match(/twist$/g)) {
       playerHand.push(deck.pop());
       if (stillInPlay(playerHand, computerHand)) {
         computerHand.push(deck.pop());

@@ -2,7 +2,7 @@
   "name": "cards",
   "version": "0.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/pontoon.js",
   "scripts": {
     "test": "jest",
     "start": "babel-node --presets es2015 --plugins transform-async-to-generator src/pontoon.js"

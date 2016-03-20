@@ -1,32 +1,29 @@
 import Hand from './hand'
-import {Log, color} from './log'
+import { color } from './log'
 import { Deck } from './deck'
 import chalk from 'chalk'
 import Game from './game'
-
-let playerHand;
-let computerHand;
 
 class Pontoon extends Game {
 
   constructor() {
     super('Pontoon');
-    playerHand = new Hand('You');
-    computerHand = new Hand('Computer');
-    playerHand.name = chalk.blue(playerHand.name);
-    computerHand.name = chalk.gray(computerHand.name);
-    playerHand.on('log', (message) => this.write(message));
-    computerHand.on('log', (message) => this.write(message));
+    this.playerHand = new Hand('You');
+    this.computerHand = new Hand('Computer');
+    this.playerHand.name = chalk.blue(this.playerHand.name);
+    this.computerHand.name = chalk.gray(this.computerHand.name);
+    this.playerHand.on('log', (message) => this.write(message));
+    this.computerHand.on('log', (message) => this.write(message));
     this.begin();
   }
 
   begin() {
     super.begin();
-    playerHand.push(this.deck.pop());
-    computerHand.push(this.deck.pop());
-    playerHand.push(this.deck.pop());
-    computerHand.push(this.deck.pop());
-    if (this.stillInPlay(computerHand, playerHand)) {
+    this.playerHand.push(this.deck.pop());
+    this.computerHand.push(this.deck.pop());
+    this.playerHand.push(this.deck.pop());
+    this.computerHand.push(this.deck.pop());
+    if (this.stillInPlay(this.computerHand, this.playerHand)) {
       this.queue.push(this.stickOrTwist);
     } else {
       this.queue.push(this.playAgain);
@@ -49,29 +46,29 @@ class Pontoon extends Game {
   }
 
   stickOrTwist() {
-    this.repl.question(`Stick or twist with ${color(playerHand.cards.join())} (${Deck.score(playerHand.cards)})?\n>`, (answer) => {
+    this.repl.question(`Stick or twist with ${color(this.playerHand.cards.join())} (${Deck.score(this.playerHand.cards)})?\n>`, (answer) => {
       if (answer.match(/^$|^[tT]/)) {
-        playerHand.push(this.deck.pop());
-        if (this.stillInPlay(playerHand, computerHand)) {
-          computerHand.push(this.deck.pop());
+        this.playerHand.push(this.deck.pop());
+        if (this.stillInPlay(this.playerHand, this.computerHand)) {
+          this.computerHand.push(this.deck.pop());
           this.queue.push(this.stickOrTwist);
         } else {
           this.playAgain();
         }
       } else { // stick
-        playerHand.stuck = true;
-        if (Deck.score(computerHand.cards) < 16) {
-          this.write(`${computerHand.name} has decided to twist too`);
-          computerHand.push(this.deck.pop());
-          if (this.stillInPlay(computerHand, playerHand)) {
+        this.playerHand.stuck = true;
+        if (Deck.score(this.computerHand.cards) < 16) {
+          this.write(`${this.computerHand.name} has decided to twist too`);
+          this.computerHand.push(this.deck.pop());
+          if (this.stillInPlay(this.computerHand, this.playerHand)) {
             this.queue.push(this.stickOrTwist);
           } else {
             this.playAgain();
           }
         } else {
-          playerHand.stuck = true;
-          this.write(`${computerHand.name} has decided to stick`);
-          if (this.stillInPlay(computerHand, playerHand)) {
+          this.playerHand.stuck = true;
+          this.write(`${this.computerHand.name} has decided to stick`);
+          if (this.stillInPlay(this.computerHand, this.playerHand)) {
             this.queue.push(this.stickOrTwist);
           } else {
             this.playAgain();
@@ -83,4 +80,4 @@ class Pontoon extends Game {
 
 }
 
-new Pontoon();
+module.exports = new Pontoon();

@@ -1,12 +1,10 @@
 // Basic blueprint for a card game
 import repl from 'repl';
 import Hand from './hand'
-import {Log, color} from './log'
+import { Log, color } from './log'
 import { Deck } from './deck'
 import chalk from 'chalk'
 import Queue from './queue'
-let playerHand;
-let computerHand;
 
 module.exports = class Game {
 

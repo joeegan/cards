@@ -1,5 +1,7 @@
-class Queue {
-  constructor(){
+module.exports = class Queue {
+
+  constructor(defaultContext) {
+    this.defaultContext = defaultContext;
     this.schedule = [];
     this.inProgress = false;
   }
@@ -14,18 +16,17 @@ class Queue {
   }
 
   /*
-   * @param An async function
+   * @param {Function} asyncTask An async function
+   * @param {Object} context In which to execute
    */
-  push(asyncTask) {
+  push(asyncTask, ctx) {
     if (!this.inProgress) {
       this.schedule = [];
-      this.schedule.push(asyncTask.bind(this))
+      this.schedule.push(asyncTask.bind(ctx || this.defaultContext))
       this.run();
     } else {
-      this.schedule.push(asyncTask.bind(this));
+      this.schedule.push(asyncTask.bind(ctx || this.defaultContext));
     }
   }
 
 }
-
-module.exports = Queue;

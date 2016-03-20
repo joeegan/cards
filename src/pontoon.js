@@ -1,103 +1,86 @@
 import Hand from './hand'
-import _repl from './repl'
 import {Log, color} from './log'
 import { Deck } from './deck'
 import chalk from 'chalk'
-import Queue from './queue'
+import Game from './game'
 
-const repl = _repl('Pontoon');
-const deck = new Deck();
-const log = new Log(repl);
-const queue = new Queue();
 let playerHand;
 let computerHand;
 
-begin();
+class Pontoon extends Game {
 
-function begin() {
-  deck.riffleShuffle(999);
-  playerHand = new Hand('You');
-  computerHand = new Hand('Computer');
-  playerHand.on('log', (message) => write(message));
-  computerHand.on('log', (message) => write(message));
-  playerHand.name = chalk.blue(playerHand.name);
-  computerHand.name = chalk.gray(computerHand.name);
-  write(`${chalk.green('Welcome to Pontoon.')}`);
-  playerHand.push(deck.pop());
-  computerHand.push(deck.pop());
-  playerHand.push(deck.pop());
-  computerHand.push(deck.pop());
-  if (stillInPlay(computerHand, playerHand)) {
-    queue.push(stickOrTwist);
-  } else {
-    queue.push(playAgain);
+  constructor() {
+    super('Pontoon');
+    playerHand = new Hand('You');
+    computerHand = new Hand('Computer');
+    playerHand.name = chalk.blue(playerHand.name);
+    computerHand.name = chalk.gray(computerHand.name);
+    playerHand.on('log', (message) => this.write(message));
+    computerHand.on('log', (message) => this.write(message));
+    this.begin();
   }
-}
 
-function playAgain() {
-  write(`Play again? (${chalk.green('yes')} or ${chalk.red('no')})`);
-  repl.question('', (answer) => {
-    if (answer.match(/^$|^[yY]/)) {
-      clear();
-      begin();
+  begin() {
+    super.begin();
+    playerHand.push(this.deck.pop());
+    computerHand.push(this.deck.pop());
+    playerHand.push(this.deck.pop());
+    computerHand.push(this.deck.pop());
+    if (this.stillInPlay(computerHand, playerHand)) {
+      this.queue.push(this.stickOrTwist);
     } else {
-      repl.close();
+      this.queue.push(this.playAgain);
     }
-  });
-}
-
-function stillInPlay(hand, otherHand) {
-  var total = Deck.score(hand.cards);
-  if (total == 21) {
-    write(`${hand.name} got 21! :triumph:`);
-    write(`${hand.name} ${chalk.green('won the game')} with ${color(hand.cards.join())}`);
-    return false;
-  } else if (total > 21) {
-    write(`${hand.name} ${chalk.red('busts')} with ${color(hand.cards.join())} (${total})`);
-    write(`${otherHand.name} ${chalk.green('wins')} with ${color(otherHand.cards.join())} (${Deck.score(otherHand.cards)})`);
-    return false;
-  } else if (total < 21) {
-    return true;
   }
-}
 
-function stickOrTwist() {
-  repl.question(`Stick or twist with ${color(playerHand.cards.join())} (${Deck.score(playerHand.cards)})?\n>`, (answer) => {
-    if (answer.match(/^$|^[tT]/)) {
-      playerHand.push(deck.pop());
-      if (stillInPlay(playerHand, computerHand)) {
-        computerHand.push(deck.pop());
-        queue.push(stickOrTwist);
-      } else {
-        playAgain();
-      }
-    } else { // stick
-      playerHand.stuck = true;
-      if (Deck.score(computerHand.cards) < 16) {
-        write(`${computerHand.name} has decided to twist too`);
-        computerHand.push(deck.pop());
-        if (stillInPlay(computerHand, playerHand)) {
-          queue.push(stickOrTwist);
-        } else {
-          playAgain();
-        }
-      } else {
-        playerHand.stuck = true;
-        write(`${computerHand.name} has decided to stick`);
-        if (stillInPlay(computerHand, playerHand)) {
-          queue.push(stickOrTwist);
-        } else {
-          playAgain();
-        }
-      }
+  stillInPlay(hand, otherHand) {
+    var total = Deck.score(hand.cards);
+    if (total == 21) {
+      this.write(`${hand.name} got 21! :triumph:`);
+      this.write(`${hand.name} ${chalk.green('won the game')} with ${color(hand.cards.join())}`);
+      return false;
+    } else if (total > 21) {
+      this.write(`${hand.name} ${chalk.red('busts')} with ${color(hand.cards.join())} (${total})`);
+      this.write(`${otherHand.name} ${chalk.green('wins')} with ${color(otherHand.cards.join())} (${Deck.score(otherHand.cards)})`);
+      return false;
+    } else if (total < 21) {
+      return true;
     }
-  });
+  }
+
+  stickOrTwist() {
+    this.repl.question(`Stick or twist with ${color(playerHand.cards.join())} (${Deck.score(playerHand.cards)})?\n>`, (answer) => {
+      if (answer.match(/^$|^[tT]/)) {
+        playerHand.push(this.deck.pop());
+        if (this.stillInPlay(playerHand, computerHand)) {
+          computerHand.push(this.deck.pop());
+          this.queue.push(this.stickOrTwist);
+        } else {
+          this.playAgain();
+        }
+      } else { // stick
+        playerHand.stuck = true;
+        if (Deck.score(computerHand.cards) < 16) {
+          this.write(`${computerHand.name} has decided to twist too`);
+          computerHand.push(this.deck.pop());
+          if (this.stillInPlay(computerHand, playerHand)) {
+            this.queue.push(this.stickOrTwist);
+          } else {
+            this.playAgain();
+          }
+        } else {
+          playerHand.stuck = true;
+          this.write(`${computerHand.name} has decided to stick`);
+          if (this.stillInPlay(computerHand, playerHand)) {
+            this.queue.push(this.stickOrTwist);
+          } else {
+            this.playAgain();
+          }
+        }
+      }
+    });
+  }
+
 }
 
-function clear() {
-  process.stdout.write('\u001B[2J\u001B[0;0f');
-}
-
-function write(msg) {
-  queue.push(log.writeLine.bind(log, msg));
-}
+new Pontoon();

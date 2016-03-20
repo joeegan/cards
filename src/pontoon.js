@@ -37,7 +37,7 @@ function begin() {
 
 function playAgain() {
   repl.question(`Play again? (${chalk.green('yes')} or ${chalk.red('no')})`, (answer) => {
-    if (answer.match(/^[yY]/) || answer == '') {
+    if (answer.match(/^$|^[yY]/)) {
       clear();
       begin();
     } else {
@@ -63,14 +63,14 @@ function stillInPlay(hand, otherHand) {
 
 function stickOrTwist() {
   repl.question(`Stick or twist with ${color(playerHand.cards.join())} (${Deck.score(playerHand.cards)})?\n>`, (answer) => {
-    if (answer == 'twist' || answer == '') {
+    if (answer.match(/^$|^[tT]/)) {
       playerHand.push(deck.pop());
       if (stillInPlay(playerHand, computerHand)) {
         computerHand.push(deck.pop());
         stickOrTwist();
       };
       playAgain();
-    } else if (answer == 'stick') {
+    } else { // stick
       playerHand.stuck = true;
       if (Deck.score(computerHand.cards) < 16) {
         log.write(`${computerHand.name} has decided to twist too`);

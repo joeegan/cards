@@ -7,10 +7,6 @@ class Log {
     this.repl = repl;
   }
 
-  write(msg) {
-    return this.writeLine.bind(this, msg);
-  }
-
   writeLine(msg) {
     let repl = this.repl;
     return new Promise(function(resolve, reject) {
@@ -32,7 +28,6 @@ class Log {
       })();
     });
   }
-
 
 }
 

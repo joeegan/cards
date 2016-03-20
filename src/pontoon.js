@@ -9,8 +9,6 @@ const repl = _repl('Pontoon');
 const deck = new Deck();
 const log = new Log(repl);
 const queue = new Queue();
-
-
 let playerHand;
 let computerHand;
 
@@ -20,11 +18,11 @@ function begin() {
   deck.riffleShuffle(999);
   playerHand = new Hand('You');
   computerHand = new Hand('Computer');
-  playerHand.on('log', (message) => queue.push(log.write(message)));
-  computerHand.on('log', (message) => queue.push(log.write(message)));
+  playerHand.on('log', (message) => write(message));
+  computerHand.on('log', (message) => write(message));
   playerHand.name = chalk.blue(playerHand.name);
   computerHand.name = chalk.gray(computerHand.name);
-  queue.push(log.write(`${chalk.green('Welcome to Pontoon.')}`));
+  write(`${chalk.green('Welcome to Pontoon.')}`);
   playerHand.push(deck.pop());
   computerHand.push(deck.pop());
   playerHand.push(deck.pop());
@@ -37,7 +35,7 @@ function begin() {
 }
 
 function playAgain() {
-  queue.push(log.write(`Play again? (${chalk.green('yes')} or ${chalk.red('no')})`));
+  write(`Play again? (${chalk.green('yes')} or ${chalk.red('no')})`);
   repl.question('', (answer) => {
     if (answer.match(/^$|^[yY]/)) {
       clear();
@@ -51,12 +49,12 @@ function playAgain() {
 function stillInPlay(hand, otherHand) {
   var total = Deck.score(hand.cards);
   if (total == 21) {
-    queue.push(log.write(`${hand.name} got 21! :triumph:`));
-    queue.push(log.write(`${hand.name} ${chalk.green('won the game')} with ${color(hand.cards.join())}`));
+    write(`${hand.name} got 21! :triumph:`);
+    write(`${hand.name} ${chalk.green('won the game')} with ${color(hand.cards.join())}`);
     return false;
   } else if (total > 21) {
-    queue.push(log.write(`${hand.name} ${chalk.red('busts')} with ${color(hand.cards.join())} (${total})`));
-    queue.push(log.write(`${otherHand.name} ${chalk.green('wins')} with ${color(otherHand.cards.join())} (${Deck.score(otherHand.cards)})`));
+    write(`${hand.name} ${chalk.red('busts')} with ${color(hand.cards.join())} (${total})`);
+    write(`${otherHand.name} ${chalk.green('wins')} with ${color(otherHand.cards.join())} (${Deck.score(otherHand.cards)})`);
     return false;
   } else if (total < 21) {
     return true;
@@ -76,7 +74,7 @@ function stickOrTwist() {
     } else { // stick
       playerHand.stuck = true;
       if (Deck.score(computerHand.cards) < 16) {
-        log.write(`${computerHand.name} has decided to twist too`);
+        write(`${computerHand.name} has decided to twist too`);
         computerHand.push(deck.pop());
         if (stillInPlay(computerHand, playerHand)) {
           queue.push(stickOrTwist);
@@ -85,7 +83,7 @@ function stickOrTwist() {
         }
       } else {
         playerHand.stuck = true;
-        log.write(`${computerHand.name} has decided to stick`);
+        write(`${computerHand.name} has decided to stick`);
         if (stillInPlay(computerHand, playerHand)) {
           queue.push(stickOrTwist);
         } else {
@@ -98,4 +96,8 @@ function stickOrTwist() {
 
 function clear() {
   process.stdout.write('\u001B[2J\u001B[0;0f');
+}
+
+function write(msg) {
+  queue.push(log.writeLine.bind(log, msg));
 }

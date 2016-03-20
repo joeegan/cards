@@ -50,11 +50,11 @@ function stillInPlay(hand, otherHand) {
   var total = Deck.score(hand.cards);
   if (total == 21) {
     log.write(`${hand.name} got 21! :triumph:`);
-    log.write(`${hand.name} won the game with ${hand.cards}`);
+    log.write(`${hand.name} ${chalk.green('won the game')} with ${color(hand.cards.join())}`);
     return false;
   } else if (total > 21) {
-    log.write(`${hand.name} ${chalk.red('is busted')} with ${total}, ${hand.cards}`);
-    log.write(`${otherHand.name} ${chalk.green('wins')} with: ${otherHand.cards} (${Deck.score(otherHand.cards)})`);
+    log.write(`${hand.name} ${chalk.red('busts')} with ${color(hand.cards.join())} (${total})`);
+    log.write(`${otherHand.name} ${chalk.green('wins')} with ${color(otherHand.cards.join())} (${Deck.score(otherHand.cards)})`);
     return false;
   } else if (total < 21) {
     return true;

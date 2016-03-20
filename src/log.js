@@ -18,7 +18,7 @@ class Log {
   }
 
   write(msg) {
-    console.log(msg);
+    console.log(color(msg));
     // if (!this.inProgress) {
     //   this.queue.push(this.writeLine.bind(this, msg));
     //   this.run();
@@ -58,7 +58,8 @@ function color(str) {
   return str.replace('♡', chalk.red('♡'))
             .replace('♢', chalk.red('♢'))
             .replace('♧', chalk.gray('♧'))
-            .replace('♤', chalk.gray('♤'));
+            .replace('♤', chalk.gray('♤'))
+            .replace('T', '10');
 }
 
 module.exports = {Log, color}

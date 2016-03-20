@@ -1,4 +1,4 @@
-// sequential promise scheduler proof
+// sequential promise scheduler proof, for just pasting into the babel repl
 
 let schedule = [asyncTask.bind(this, 1), asyncTask.bind(this, 2)];
 let inProgress;

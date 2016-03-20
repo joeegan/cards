@@ -41,12 +41,15 @@ class Log {
           if (next) {
             loop();
           } else {
-            console.log(); // line break
+            repl.clearLine();
             resolve();
           }
         }, random.int(1, 5) * 1);
       })();
     });
+  }
+
+  static clear() {
   }
 
 }

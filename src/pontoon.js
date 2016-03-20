@@ -26,6 +26,7 @@ function begin() {
   computerHand.push(deck.pop());
   playerHand.push(deck.pop());
   computerHand.push(deck.pop());
+  // move all questions to promises?
   if (stillInPlay(computerHand, playerHand)) {
     stickOrTwist();
   } else {
@@ -35,8 +36,8 @@ function begin() {
 }
 
 function playAgain() {
-  repl.question(`Play again? (${chalk.green('yes')} or ${chalk.red('no')})\n>`, (answer) => {
-    if (answer.match(/^[yY]/)) {
+  repl.question(`Play again? (${chalk.green('yes')} or ${chalk.red('no')})`, (answer) => {
+    if (answer.match(/^[yY]/) || answer == '') {
       clear();
       begin();
     } else {
@@ -62,7 +63,7 @@ function stillInPlay(hand, otherHand) {
 
 function stickOrTwist() {
   repl.question(`Stick or twist with ${color(playerHand.cards.join())} (${Deck.score(playerHand.cards)})?\n>`, (answer) => {
-    if (answer.match(/twist$/g)) {
+    if (answer == 'twist' || answer == '') {
       playerHand.push(deck.pop());
       if (stillInPlay(playerHand, computerHand)) {
         computerHand.push(deck.pop());

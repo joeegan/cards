@@ -5,26 +5,10 @@ class Log {
 
   constructor(repl) {
     this.repl = repl;
-    this.queue = [];
-    this.inProgress = false;
-  }
-
-  async run() {
-    for (let p of this.queue) {
-      this.inProgress = true;
-      await p();
-    }
-    this.queue = [];
   }
 
   write(msg) {
-    console.log(color(msg));
-    // if (!this.inProgress) {
-    //   this.queue.push(this.writeLine.bind(this, msg));
-    //   this.run();
-    // } else {
-    //   this.queue.push(this.writeLine.bind(this, msg));
-    // }
+    return this.writeLine.bind(this, msg);
   }
 
   writeLine(msg) {
@@ -44,13 +28,11 @@ class Log {
             repl.clearLine();
             resolve();
           }
-        }, random.int(1, 5) * 1);
+        }, random.int(1, 5) * 10);
       })();
     });
   }
 
-  static clear() {
-  }
 
 }
 

@@ -1,6 +1,4 @@
-'use strict';
-
-var repl = require('repl');
+import repl from 'repl';
 
 module.exports = function(name) {
   return repl.start({

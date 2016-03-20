@@ -1,8 +1,6 @@
-'use strict';
-var suits = require('./representation').suits;
-var rank = require('./representation').rank;
-var random = require('./random');
-var percentage = require('./percentage');
+import { suits, rank } from './representation';
+import random from './random';
+import percentage from './percentage';
 const EventEmitter = require('events');
 
 module.exports.Deck = class Deck extends EventEmitter {

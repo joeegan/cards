@@ -1,8 +1,5 @@
-'use strict';
-
-var percentage = require('./percentage');
-var rank = require('./representation').rank;
-var suits = require('./representation').suits;
+import percentage from './percentage';
+import { suits, rank } from './representation';
 
 /**
  * Determines whether 'T' is after '9' or 'K' is after 'Q'

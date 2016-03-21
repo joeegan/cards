@@ -49,7 +49,7 @@ module.exports.Deck = class Deck extends EventEmitter {
   }
 
   overhandShuffle() {
-    return this.cards = overhandShuffle(this.cards);
+    return this.cards = Deck.overhandShuffle(this.cards);
   }
 
   /*

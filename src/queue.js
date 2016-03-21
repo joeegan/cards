@@ -19,13 +19,13 @@ module.exports = class Queue {
    * @param {Function} asyncTask An async function
    * @param {Object} context In which to execute
    */
-  push(asyncTask, ctx) {
+  push(asyncTask, ctx = this.defaultContext) {
     if (!this.inProgress) {
       this.schedule = [];
-      this.schedule.push(asyncTask.bind(ctx || this.defaultContext))
+      this.schedule.push(asyncTask.bind(ctx))
       this.run();
     } else {
-      this.schedule.push(asyncTask.bind(ctx || this.defaultContext));
+      this.schedule.push(asyncTask.bind(ctx));
     }
   }
 

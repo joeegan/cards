@@ -27,7 +27,7 @@ describe('creating a new deck', () => {
 describe('requesting a card from the deck', () => {
   it('removes a card from the top of the deck', () => {
     const originalLength = deck.cards.length;
-    const card = deck.hitMe();
+    const card = deck.topCard;
     expect(deck.cards.length).toBe(originalLength - 1);
   });
 

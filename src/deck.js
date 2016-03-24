@@ -10,16 +10,11 @@ module.exports.Deck = class Deck extends EventEmitter {
     this.cards = Deck.buildDeck();
   }
 
-  hitMe() {
+  get topCard() {
     if (!this.cards.length) {
       throw 'Sorry, no cards left';
     }
     return this.cards.pop();
-  }
-
-  // alias hitMe
-  pop() {
-    return this.hitMe();
   }
 
   /*

@@ -19,10 +19,10 @@ class Pontoon extends Game {
 
   begin() {
     super.begin();
-    this.playerHand.push(this.deck.pop());
-    this.computerHand.push(this.deck.pop());
-    this.playerHand.push(this.deck.pop());
-    this.computerHand.push(this.deck.pop());
+    this.playerHand.push(this.deck.topCard);
+    this.computerHand.push(this.deck.topCard);
+    this.playerHand.push(this.deck.topCard);
+    this.computerHand.push(this.deck.topCard);
     if (this.stillInPlay(this.computerHand, this.playerHand)) {
       this.queue.push(this.stickOrTwist);
     } else {
@@ -48,9 +48,9 @@ class Pontoon extends Game {
   stickOrTwist() {
     this.repl.question(`Stick or twist with ${color(this.playerHand.cards.join())} (${Deck.score(this.playerHand.cards)})?\n>`, (answer) => {
       if (answer.match(/^$|^[tT]/)) {
-        this.playerHand.push(this.deck.pop());
+        this.playerHand.push(this.deck.topCard);
         if (this.stillInPlay(this.playerHand, this.computerHand)) {
-          this.computerHand.push(this.deck.pop());
+          this.computerHand.push(this.deck.topCard);
           this.queue.push(this.stickOrTwist);
         } else {
           this.playAgain();
@@ -59,7 +59,7 @@ class Pontoon extends Game {
         this.playerHand.stuck = true;
         if (Deck.score(this.computerHand.cards) < 16) {
           this.write(`${this.computerHand.name} has decided to twist too`);
-          this.computerHand.push(this.deck.pop());
+          this.computerHand.push(this.deck.topCard);
           if (this.stillInPlay(this.computerHand, this.playerHand)) {
             this.queue.push(this.stickOrTwist);
           } else {

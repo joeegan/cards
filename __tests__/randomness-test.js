@@ -2,7 +2,8 @@
 
 jest.autoMockOff();
 
-const Deck = require('../src/deck').Deck;
+const Deck = require('../src/deck').default;
+
 // import { Deck } from '../src/deck';
 const randomness = require('../src/randomness');
 const nonSequential = randomness.nonSequential;

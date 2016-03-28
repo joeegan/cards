@@ -1,4 +1,4 @@
-module.exports = {
+export const Unicode = {
   'A♤': '\u{1F0A1}',
   '2♤': '\u{1F0A2}',
   '3♤': '\u{1F0A3}',

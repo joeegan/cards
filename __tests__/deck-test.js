@@ -1,7 +1,7 @@
 /* globals jest, beforeEach, describe, it, expect */
 
 jest.autoMockOff();
-const Deck = require('../src/deck').Deck;
+const Deck = require('../src/deck').default;
 const randomness = require('../src/randomness');
 const nonSequential = randomness.nonSequential;
 let deck;

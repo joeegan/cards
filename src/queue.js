@@ -1,5 +1,11 @@
-module.exports = class Queue {
+/**
+ * Performs async tasks one after another
+ */
+export default class Queue {
 
+  /**
+   * @param {Object} defaultContext
+   */
   constructor(defaultContext) {
     this.defaultContext = defaultContext;
     this.schedule = [];
@@ -7,17 +13,17 @@ module.exports = class Queue {
   }
 
   async run() {
-    for (const p of this.schedule) {
+    for (const asyncTask of this.schedule) {
       this.inProgress = true;
-      await p();
+      await asyncTask();
     }
     this.inProgress = false;
     this.schedule = [];
   }
 
-  /*
+  /**
    * @param {Function} asyncTask An async function
-   * @param {Object} context In which to execute
+   * @param {Object} ctx Context In which to execute
    */
   push(asyncTask, ctx = this.defaultContext) {
     if (!this.inProgress) {
@@ -29,4 +35,4 @@ module.exports = class Queue {
     }
   }
 
-};
+}

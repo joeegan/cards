@@ -3,9 +3,9 @@ import { suits, rank } from './representation';
 
 /**
  * Determines whether 'T' is after '9' or 'K' is after 'Q'
- * @return {Boolean}
+ * @return {boolean}
  */
-function sequentialSequence(current, prev) {
+export function sequentialSequence(current, prev) {
   const currentIdx = rank.indexOf(current);
   if (currentIdx === 0) {
     return rank.indexOf(prev) === rank.length - 1;
@@ -17,7 +17,7 @@ function sequentialSequence(current, prev) {
  * Returns the percentage of the cards in the pack that
  * are in same suit sequential order
  */
-function nonSequential(deck) {
+export function nonSequential(deck) {
   const count = deck.reduce((kount, card, i, d) => {
     const nextCard = d[i + 1];
     if (!nextCard) {
@@ -30,5 +30,3 @@ function nonSequential(deck) {
   const totalPossible = deck.length - suits.length;
   return percentage(totalPossible, totalPossible - count);
 }
-
-module.exports = { nonSequential, sequentialSequence };

@@ -1,7 +1,11 @@
 import chalk from 'chalk';
-import random from './random';
+import { randomInt } from './random';
 
-function color(str) {
+/**
+ * Wraps card representations in appropriate colors
+ * @param {string} str
+ */
+export function color(str) {
   return str.replace('♡', chalk.red('♡'))
             .replace('♢', chalk.red('♢'))
             .replace('♧', chalk.gray('♧'))
@@ -9,12 +13,19 @@ function color(str) {
             .replace('T', '10');
 }
 
-class Log {
+/**
+ * Allows 'slow' writing of strings to the repl
+ * to provide a slower pace to the game
+ */
+export class Log {
 
   constructor(repl) {
     this.repl = repl;
   }
 
+  /**
+   * {string} msg The message to display to the player in the repl
+   */
   writeLine(msg) {
     const repl = this.repl;
     return new Promise((resolve) => {
@@ -32,11 +43,9 @@ class Log {
             repl.clearLine();
             resolve();
           }
-        }, random.int(1, 5) * 10);
+        }, randomInt(1, 5) * 10);
       }());
     });
   }
 
 }
-
-module.exports = { Log, color };

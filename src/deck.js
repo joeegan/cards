@@ -1,14 +1,20 @@
 import { suits, rank } from './representation';
-import random from './random';
+import { randomInt } from './random';
 const EventEmitter = require('events');
 
-module.exports.Deck = class Deck extends EventEmitter {
+/**
+ * For shuffling and dealing
+ */
+export default class Deck extends EventEmitter {
 
   constructor() {
     super();
     this.cards = Deck.buildDeck();
   }
 
+  /**
+   * @return {string} A card from the top of the deck
+   */
   get topCard() {
     if (!this.cards.length) {
       throw new Error('Sorry, no cards left');
@@ -16,9 +22,10 @@ module.exports.Deck = class Deck extends EventEmitter {
     return this.cards.pop();
   }
 
-  /*
-   * Splits the deck in two, then merges the two halfs
-   * to form a new deck
+  /**
+   * Splits the deck in two, then interleaves the cards to form a new deck
+   * @param {number} [times=1] Quantity of times shuffle executed
+   * @return {string[]} cards A shuffled deck of cards
    */
   riffleShuffle(times = 1) {
     let newDeck;
@@ -29,10 +36,10 @@ module.exports.Deck = class Deck extends EventEmitter {
       this.emit('deckHalved', firstHalf, secondHalf);
       newDeck = [];
       while (newDeck.length < deckLength) {
-        let rand = random.int(1, 2);
+        let rand = randomInt(1, 2);
         newDeck = Deck.shiftHalf(secondHalf, rand, newDeck);
         this.emit('secondHalfPush');
-        rand = random.int(1, 2);
+        rand = randomInt(1, 2);
         newDeck = Deck.shiftHalf(firstHalf, rand, newDeck);
         this.emit('firstHalfPush');
       }
@@ -41,13 +48,17 @@ module.exports.Deck = class Deck extends EventEmitter {
     return this.cards;
   }
 
+  /**
+   * Mimics the stand shuffling technique of humans
+   * @return {string[]} cards A shuffled deck of cards
+   */
   overhandShuffle() {
     this.cards = Deck.overhandShuffle(this.cards);
     return this.cards;
   }
 
-  /*
-   * @return {[String]} deck
+  /**
+   * @return {string[]} deck
    */
   static buildDeck() {
     return suits.replace(/./g, (suit) =>
@@ -55,12 +66,12 @@ module.exports.Deck = class Deck extends EventEmitter {
     ).match(/.{1,2}/g);
   }
 
-  /*
+  /**
    * Pushes a quantity of cards into another
-   * @param {[String]} cards The source of the cards to push
-   * @param {Number} quantity How many cards to take from each half
-   * @param {[String]} deck Deck to push the cards into
-   * @return {[String]} deck
+   * @param {string[]} cards The source of the cards to push
+   * @param {number} quantity How many cards to take from each half
+   * @param {string[]]} deck Deck to push the cards into
+   * @return {string[]]} deck
    */
   static shiftHalf(cards, quantity, deck) {
     for (let j = 0; j < quantity; j++) {
@@ -71,18 +82,18 @@ module.exports.Deck = class Deck extends EventEmitter {
     return deck;
   }
 
-  /*
+  /**
    * Mimics the standard shuffling technique
-   * @param {[String]} deck Deck to push the cards into
-   * @return {[String]} deck
+   * @param {string[]]} deck Deck to push the cards into
+   * @return {string[]]} deck
    */
   static overhandShuffle(deck) {
     /* eslint no-param-reassign: "off" */
     for (let i = 0; i < 1000; i++) {
       // Take a hand of a random amount of cards from the bottom of the deck
-      const hand = deck.splice(random.int(1, 10));
+      const hand = deck.splice(randomInt(1, 10));
       // Take a random amount of cards from the bottom the hand
-      const remainderHand = hand.splice(random.int(1, 10));
+      const remainderHand = hand.splice(randomInt(1, 10));
       // Put what remains of the hand at the top of the deck
       deck = hand.concat(deck);
       // Put the other hand on top
@@ -91,11 +102,11 @@ module.exports.Deck = class Deck extends EventEmitter {
     return deck;
   }
 
-  /*
-   * Returns the sum of the value of their cards according to pontpon rules
-   * @param {[String]} cards e.g. ['A♤', '9♡'];
-   * @param {Boolean} aceLow Whether aces should be valued as one or eleven
-   * @return {Number}
+  /**
+   * Returns the sum of the value of their cards according to pontoon rules
+   * @param {string[]} cards e.g. ['A♤', '9♡'];
+   * @param {boolean} aceLow Whether aces should be valued as one or eleven
+   * @return {number}
    */
   static score(cards, aceLow) {
     const nums = cards.map((card) => {
@@ -109,12 +120,12 @@ module.exports.Deck = class Deck extends EventEmitter {
     return Deck.sum(nums);
   }
 
-  /*
-   * @param {[Number]}
-   * @returns {Number}
+  /**
+   * @param {number[]} arr
+   * @return {number}
    */
   static sum(arr) {
     return arr.reduce((sum, num) => sum + num, 0);
   }
 
-};
+}

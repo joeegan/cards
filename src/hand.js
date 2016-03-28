@@ -1,12 +1,9 @@
 import EventEmitter from 'events';
 
-/*
- * Array wrapper with log events emitted
- */
-module.exports = class hand extends EventEmitter {
+export default class Hand extends EventEmitter {
 
-  /*
-   * @param {String} e.g. 'Giles'
+  /**
+   * @param {string} name e.g. 'Player1'
    */
   constructor(name) {
     super();
@@ -20,8 +17,8 @@ module.exports = class hand extends EventEmitter {
     this.cards = [];
   }
 
-  /*
-   * @param {String} e.g. '5♡'
+  /**
+   * @param {string} card e.g. '5♡'
    */
   push(card) {
     const a = this.cards.length ? 'another' : 'a';
@@ -30,4 +27,4 @@ module.exports = class hand extends EventEmitter {
                       + `dealt ${a} card ${this.revealHand ? card : ''}`);
   }
 
-};
+}

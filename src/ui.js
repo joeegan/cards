@@ -1,14 +1,13 @@
 import unicode from './unicode';
 import $ from 'jquery';
 import { Deck } from './deck';
-import { nonSequential } from './randomness';
 
 const suits = {
-  '♤': "spade",
-  '♡': "heart",
-  '♢': "diamond",
-  '♧': "club"
-}
+  '♤': 'spade',
+  '♡': 'heart',
+  '♢': 'diamond',
+  '♧': 'club',
+};
 
 function template(card, suit, id) {
   return `<span class='${suit}' id=${id}>${card}</span>`;
@@ -20,17 +19,17 @@ function renderCards(cards) {
   , '');
 }
 
-function moveCards(cards) {
-    (function loop(card = cards[0], idx = 0) {
-      $(`span:eq(${idx})`).before($(`#${card}`)).hide().show('slow');
-      setTimeout(() => {
-        loop(cards[idx++], idx)
-      }, 100);
-    })();
-}
+// function moveCards(cards) {
+//   (function loop(card = cards[0], idx = 0) {
+//     $(`span:eq(${idx})`).before($(`#${card}`)).hide().show('slow');
+//     setTimeout(() => {
+//       loop(cards[idx++], idx)
+//     }, 100);
+//   }());
+// }
 
-let D = new Deck();
-let cards = D.cards;
+const D = new Deck();
+const cards = D.cards;
 
 window.onload = () => {
   renderCards(cards);

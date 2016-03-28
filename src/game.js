@@ -1,10 +1,13 @@
 // Basic blueprint for a card game
 import repl from 'repl';
-import Hand from './hand'
-import { Log, color } from './log'
-import { Deck } from './deck'
-import chalk from 'chalk'
-import Queue from './queue'
+import { Log } from './log';
+import { Deck } from './deck';
+import chalk from 'chalk';
+import Queue from './queue';
+
+function clear() {
+  process.stdout.write('\u001B[2J\u001B[0;0f');
+}
 
 module.exports = class Game {
 
@@ -13,7 +16,7 @@ module.exports = class Game {
     this.deck.riffleShuffle(1000);
     this.name = name;
     this.repl = repl.start({
-      prompt: this.name + '> ',
+      prompt: `${this.name}> `,
       input: process.stdin,
       output: process.stdout,
     });
@@ -21,7 +24,7 @@ module.exports = class Game {
     this.queue = new Queue(this);
   }
 
-  begin(){
+  begin() {
     this.write(chalk.green(`Welcome to ${this.name}.`));
   }
 
@@ -41,8 +44,4 @@ module.exports = class Game {
     });
   }
 
-}
-
-function clear() {
-  process.stdout.write('\u001B[2J\u001B[0;0f');
-}
+};

@@ -11,7 +11,7 @@ module.exports = class hand extends EventEmitter {
   constructor(name) {
     super();
     this.name = name;
-    if (name == 'You') {
+    if (name === 'You') {
       this.haveHas = 'have';
       this.revealHand = true;
     } else {
@@ -24,9 +24,10 @@ module.exports = class hand extends EventEmitter {
    * @param {String} e.g. '5♡'
    */
   push(card) {
-    var a = this.cards.length ? 'another' : 'a';
+    const a = this.cards.length ? 'another' : 'a';
     this.cards.push(card);
-    this.emit('log', `${this.name} ${this.haveHas} been dealt ${a} card ${this.revealHand ? card : ''}`);
+    this.emit('log', `${this.name} ${this.haveHas} been `
+                      + `dealt ${a} card ${this.revealHand ? card : ''}`);
   }
 
-}
+};

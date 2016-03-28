@@ -7,7 +7,7 @@ module.exports = class Queue {
   }
 
   async run() {
-    for (let p of this.schedule) {
+    for (const p of this.schedule) {
       this.inProgress = true;
       await p();
     }
@@ -22,11 +22,11 @@ module.exports = class Queue {
   push(asyncTask, ctx = this.defaultContext) {
     if (!this.inProgress) {
       this.schedule = [];
-      this.schedule.push(asyncTask.bind(ctx))
+      this.schedule.push(asyncTask.bind(ctx));
       this.run();
     } else {
       this.schedule.push(asyncTask.bind(ctx));
     }
   }
 
-}
+};

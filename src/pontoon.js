@@ -1,8 +1,8 @@
-import Hand from './hand'
-import { color } from './log'
-import { Deck } from './deck'
-import chalk from 'chalk'
-import Game from './game'
+import Hand from './hand';
+import { color } from './log';
+import { Deck } from './deck';
+import chalk from 'chalk';
+import Game from './game';
 
 class Pontoon extends Game {
 
@@ -31,22 +31,26 @@ class Pontoon extends Game {
   }
 
   stillInPlay(hand, otherHand) {
-    var total = Deck.score(hand.cards);
-    if (total == 21) {
+    const total = Deck.score(hand.cards);
+    if (total === 21) {
       this.write(`${hand.name} got 21! :triumph:`);
-      this.write(`${hand.name} ${chalk.green('won the game')} with ${color(hand.cards.join())}`);
+      this.write(`${hand.name} ${chalk.green('won the game')}
+       with ${color(hand.cards.join())}`);
       return false;
     } else if (total > 21) {
-      this.write(`${hand.name} ${chalk.red('busts')} with ${color(hand.cards.join())} (${total})`);
-      this.write(`${otherHand.name} ${chalk.green('wins')} with ${color(otherHand.cards.join())} (${Deck.score(otherHand.cards)})`);
+      this.write(`${hand.name} ${chalk.red('busts')}`
+       + ` with ${color(hand.cards.join())} (${total})`);
+      this.write(`${otherHand.name} ${chalk.green('wins')}`
+       + ` with ${color(otherHand.cards.join())} (${Deck.score(otherHand.cards)})`);
       return false;
-    } else if (total < 21) {
-      return true;
     }
+    // total < 21
+    return true;
   }
 
   stickOrTwist() {
-    this.repl.question(`Stick or twist with ${color(this.playerHand.cards.join())} (${Deck.score(this.playerHand.cards)})?\n>`, (answer) => {
+    this.repl.question(`Stick or twist with ${color(this.playerHand.cards.join())}
+     (${Deck.score(this.playerHand.cards)})?\n>`, (answer) => {
       if (answer.match(/^$|^[tT]/)) {
         this.playerHand.push(this.deck.topCard);
         if (this.stillInPlay(this.playerHand, this.computerHand)) {

@@ -1,6 +1,5 @@
 import { suits, rank } from './representation';
 import random from './random';
-import percentage from './percentage';
 const EventEmitter = require('events');
 
 module.exports.Deck = class Deck extends EventEmitter {
@@ -12,7 +11,7 @@ module.exports.Deck = class Deck extends EventEmitter {
 
   get topCard() {
     if (!this.cards.length) {
-      throw 'Sorry, no cards left';
+      throw new Error('Sorry, no cards left');
     }
     return this.cards.pop();
   }
@@ -21,30 +20,30 @@ module.exports.Deck = class Deck extends EventEmitter {
    * Splits the deck in two, then merges the two halfs
    * to form a new deck
    */
-  riffleShuffle(times) {
-    var times = times || 1;
-    var newDeck;
-    for (var i = 0; i < times; i++) {
+  riffleShuffle(times = 1) {
+    let newDeck;
+    for (let i = 0; i < times; i++) {
       const deckLength = this.cards.length;
-      const firstHalf = this.cards.slice(0, deckLength/2);
-      const secondHalf = this.cards.slice(deckLength/2);
+      const firstHalf = this.cards.slice(0, deckLength / 2);
+      const secondHalf = this.cards.slice(deckLength / 2);
       this.emit('deckHalved', firstHalf, secondHalf);
       newDeck = [];
-      while(newDeck.length < deckLength) {
-        let rand = random.int(1,2);
+      while (newDeck.length < deckLength) {
+        let rand = random.int(1, 2);
         newDeck = Deck.shiftHalf(secondHalf, rand, newDeck);
         this.emit('secondHalfPush');
-        rand = random.int(1,2);
+        rand = random.int(1, 2);
         newDeck = Deck.shiftHalf(firstHalf, rand, newDeck);
         this.emit('firstHalfPush');
       }
       this.cards = newDeck;
     }
-    return this.cards
+    return this.cards;
   }
 
   overhandShuffle() {
-    return this.cards = Deck.overhandShuffle(this.cards);
+    this.cards = Deck.overhandShuffle(this.cards);
+    return this.cards;
   }
 
   /*
@@ -52,7 +51,7 @@ module.exports.Deck = class Deck extends EventEmitter {
    */
   static buildDeck() {
     return suits.replace(/./g, (suit) =>
-      rank.replace(/(\w)/g, '$1' + suit)
+      rank.replace(/(\w)/g, `$1${suit}`)
     ).match(/.{1,2}/g);
   }
 
@@ -65,7 +64,9 @@ module.exports.Deck = class Deck extends EventEmitter {
    */
   static shiftHalf(cards, quantity, deck) {
     for (let j = 0; j < quantity; j++) {
-      cards.length && deck.push(cards.shift());
+      if (cards.length) {
+        deck.push(cards.shift());
+      }
     }
     return deck;
   }
@@ -76,11 +77,12 @@ module.exports.Deck = class Deck extends EventEmitter {
    * @return {[String]} deck
    */
   static overhandShuffle(deck) {
-    for (var i = 0; i < 1000; i++) {
+    /* eslint no-param-reassign: "off" */
+    for (let i = 0; i < 1000; i++) {
       // Take a hand of a random amount of cards from the bottom of the deck
-      let hand = deck.splice(random.int(1, 10));
+      const hand = deck.splice(random.int(1, 10));
       // Take a random amount of cards from the bottom the hand
-      let remainderHand = hand.splice(random.int(1, 10));
+      const remainderHand = hand.splice(random.int(1, 10));
       // Put what remains of the hand at the top of the deck
       deck = hand.concat(deck);
       // Put the other hand on top
@@ -96,14 +98,13 @@ module.exports.Deck = class Deck extends EventEmitter {
    * @return {Number}
    */
   static score(cards, aceLow) {
-    let nums = cards.map((card) => {
+    const nums = cards.map((card) => {
       if (card[0].match(/[TJQK]/)) {
         return 10;
       } else if (card[0].match(/A/)) {
         return aceLow ? 1 : 11;
-      } else {
-        return +card[0];
       }
+      return +card[0];
     });
     return Deck.sum(nums);
   }
@@ -116,4 +117,4 @@ module.exports.Deck = class Deck extends EventEmitter {
     return arr.reduce((sum, num) => sum + num, 0);
   }
 
-}
+};

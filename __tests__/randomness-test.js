@@ -1,4 +1,4 @@
-'use strict';
+/* globals jest, beforeEach, describe, it, expect */
 
 jest.autoMockOff();
 
@@ -10,12 +10,11 @@ const sequentialSequence = randomness.sequentialSequence;
 // import { nonSequential, sequentialSequence } from '../src/randomness';
 
 describe('provides a score based on nonSequential cards', () => {
-
   let cards;
 
   beforeEach(() => {
     cards = new Deck().cards;
-  })
+  });
 
   it('determines sequential ranks', () => {
     expect(sequentialSequence('2', 'A')).toBe(true);
@@ -40,5 +39,4 @@ describe('provides a score based on nonSequential cards', () => {
   it('has a score of 100 for a reveresed pack', () => {
     expect(nonSequential(cards.reverse())).toBe(100);
   });
-
 });

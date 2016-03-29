@@ -1,24 +1,30 @@
-import Hand from './hand';
 import { color } from './log';
 import Deck from './deck';
 import chalk from 'chalk';
-import Game from './game';
+import VersusComputer from './versus-computer';
 
 /**
  * First person text based game against the computer
  * Contains the game logic and questions
  */
-class Pontoon extends Game {
+class Pontoon extends VersusComputer {
 
   constructor() {
     super('Pontoon');
-    this.playerHand = new Hand('You');
-    this.computerHand = new Hand('Computer');
-    this.playerHand.name = chalk.blue(this.playerHand.name);
-    this.computerHand.name = chalk.gray(this.computerHand.name);
-    this.playerHand.on('log', (message) => this.write(message));
-    this.computerHand.on('log', (message) => this.write(message));
-    this.begin();
+  }
+
+  /**
+  * @param {string[]} hand
+  */
+  handleCardRecieved(hand) {
+    if (hand.cards.length < 2) {
+      return;
+    }
+    if (this.stillInPlay(hand, this.playerHand)) {
+      this.queue.push(this.stickOrTwist);
+    } else {
+      this.queue.push(this.playAgain);
+    }
   }
 
   /**
@@ -30,12 +36,6 @@ class Pontoon extends Game {
     this.playerHand.push(this.deck.topCard);
     this.computerHand.push(this.deck.topCard);
     this.playerHand.push(this.deck.topCard);
-    this.computerHand.push(this.deck.topCard);
-    if (this.stillInPlay(this.computerHand, this.playerHand)) {
-      this.queue.push(this.stickOrTwist);
-    } else {
-      this.queue.push(this.playAgain);
-    }
   }
 
   /**
@@ -48,8 +48,8 @@ class Pontoon extends Game {
     const total = Deck.score(hand.cards);
     if (total === 21) {
       this.write(`${hand.name} got 21! :triumph:`);
-      this.write(`${hand.name} ${chalk.green('won the game')}
-       with ${color(hand.cards.join())}`);
+      this.write(`${hand.name} ${chalk.green('won the game')}`
+       + ` with ${color(hand.cards.join())}`);
       return false;
     } else if (total > 21) {
       this.write(`${hand.name} ${chalk.red('busts')}`
@@ -67,8 +67,8 @@ class Pontoon extends Game {
    * be given another one from the deck
    */
   stickOrTwist() {
-    this.repl.question(`Stick or twist with ${color(this.playerHand.cards.join())}
-     (${Deck.score(this.playerHand.cards)})?\n>`, (answer) => {
+    this.repl.question(`Stick or twist with ${color(this.playerHand.cards.join())}`
+     + ` (${Deck.score(this.playerHand.cards)})?\n>`, (answer) => {
       if (answer.match(/^$|^[tT]/)) {
         this.playerHand.push(this.deck.topCard);
         if (this.stillInPlay(this.playerHand, this.computerHand)) {
@@ -80,7 +80,7 @@ class Pontoon extends Game {
       } else { // stick
         this.playerHand.stuck = true;
         if (Deck.score(this.computerHand.cards) < 16) {
-          this.write(`${this.computerHand.name} has decided to twist too`);
+          this.write(`${this.computerHand.name} has decided to twist`);
           this.computerHand.push(this.deck.topCard);
           if (this.stillInPlay(this.computerHand, this.playerHand)) {
             this.queue.push(this.stickOrTwist);

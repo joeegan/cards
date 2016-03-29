@@ -25,6 +25,7 @@ export default class Hand extends EventEmitter {
     this.cards.push(card);
     this.emit('log', `${this.name} ${this.haveHas} been `
                       + `dealt ${a} card ${this.revealHand ? card : ''}`);
+    this.emit('recievedCard', this);
   }
 
 }

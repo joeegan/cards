@@ -1,16 +1,9 @@
-// Basic blueprint for a card game
 import repl from 'repl';
 import { Log } from './log';
 import Deck from './deck';
 import chalk from 'chalk';
+import Hand from './hand';
 import Queue from './queue';
-
-/**
- * Clears out the repl so the player feels like they are starting a new game
- */
-function clear() {
-  process.stdout.write('\u001B[2J\u001B[0;0f');
-}
 
 /**
  * Common functionality for text based card game
@@ -18,13 +11,13 @@ function clear() {
 export default class Game {
 
   /**
-   * Creates a new game and fires up a repl for writing to, via a Queue
+   * Sets up the tools required for the text based game
    * @param {string} name Identifier for the game, e.g. 'Whist'
+   * @param {string[]} Names of the players e.g. 'You', 'Computer'
    */
-  constructor(name) {
-    this.deck = new Deck();
-    this.deck.riffleShuffle(1000);
+  constructor(name, playerNames) {
     this.name = name;
+    this.playerNames = playerNames;
     this.repl = repl.start({
       prompt: `${this.name}> `,
       input: process.stdin,
@@ -32,13 +25,33 @@ export default class Game {
     });
     this.log = new Log(this.repl);
     this.queue = new Queue(this);
+    this.begin();
   }
 
   /**
-   * Welcomes the player to the game
+   * Begins the game with fresh deck and empty hands
    */
   begin() {
+    this.hands = this.playerNames.map((name) => new Hand(name));
+    this.hands.forEach((hand) => {
+      hand.name = chalk.blue(hand.name);
+      hand.on('log', this.write.bind(this));
+      hand.on('recievedCard',
+        this.handleCardRecieved.bind(this, hand, this.otherHands(hand)));
+    });
+
+    this.deck = new Deck();
+    this.deck.riffleShuffle(1000);
+
     this.write(chalk.green(`Welcome to ${this.name}.`));
+  }
+
+  /**
+  * @param {Hand} hand
+  * @param {Hand[]} otherHands
+  */
+  handleCardRecieved() {
+    throw Error('handleCardRecieved must be overidden');
   }
 
   /**
@@ -50,18 +63,34 @@ export default class Game {
   }
 
   /**
-   * Asks the player if they would like to play another game
+   * Poses the question of whether the player would like to play another game
    */
   playAgain() {
     this.write(`Play again? (${chalk.green('yes')} or ${chalk.red('no')})`);
     this.repl.question('', (answer) => {
       if (answer.match(/^$|^[yY]/)) {
-        clear();
+        Game.clear();
         this.begin();
       } else {
         this.repl.close();
       }
     });
+  }
+
+  /**
+   * Returns an array of the other hands involved in the game
+   * @param {Hand} hand
+   * @return {Hand[]}
+   */
+  otherHands(hand) {
+    return this.hands.filter((h) => h.name !== hand.name);
+  }
+
+  /**
+   * Clears out the repl so the player feels like they are starting a new game
+   */
+  static clear() {
+    process.stdout.write('\u001B[2J\u001B[0;0f');
   }
 
 }

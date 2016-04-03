@@ -1,48 +1,51 @@
 import { color } from './log';
 import Deck from './deck';
 import chalk from 'chalk';
-import VersusComputer from './versus-computer';
+import Game from './game';
 
 /**
  * First person text based game against the computer
  * Contains the game logic and questions
  */
-class Pontoon extends VersusComputer {
+class Pontoon extends Game {
 
   constructor() {
-    super('Pontoon');
+    super('Pontoon', ['You', 'Computer']);
   }
 
   /**
-  * @param {string[]} hand
-  * @param {string[]} otherHand
-  */
-  handleCardRecieved(hand, otherHand) {
+   * When cards are recieved, check whether the hand is still inplay
+   * @param {Hand} hand
+   * @param {Hand[]} otherHands
+   */
+  handleCardRecieved(hand, otherHands) {
     if (hand.cards.length < 2) {
       return;
     }
-    if (this.stillInPlay(hand, otherHand)) {
-      this.queue.push(this.stickOrTwist);
+    if (this.stillInPlay(hand, otherHands[0])) {
+      this.queue.push(this.stickOrTwist.bind(this, hand));
     } else {
       this.queue.push(this.playAgain);
     }
   }
 
   /**
-   * Deals out initial cards to the players and asks the player to
-   * stick or twist, or play again.
+   * Deals out initial cards to the players
    */
   begin() {
     super.begin();
-    this.playerHand.push(this.deck.topCard);
-    this.computerHand.push(this.deck.topCard);
-    this.playerHand.push(this.deck.topCard);
+    // Give everyone a card
+    this.hands.forEach((hand) => {
+      hand.push(this.deck.topCard);
+    });
+    // Give first player an additional card
+    this.hands[0].push(this.deck.topCard);
   }
 
   /**
    * Determines whether the player is able to continue playing
-   * @param {string[]} hand The hand to analyse
-   * @param {string[]} otherHand If 'hand' loses, used to congratulate the other player
+   * @param {Hand} hand The hand to analyse
+   * @param {Hand} otherHand If 'hand' loses, used to congratulate the other player
    * @return {boolean}
    */
   stillInPlay(hand, otherHand) {
@@ -52,7 +55,8 @@ class Pontoon extends VersusComputer {
       this.write(`${hand.name} ${chalk.green('won the game')}`
        + ` with ${color(hand.cards.join())}`);
       return false;
-    } else if (total > 21) {
+    }
+    if (total > 21) {
       this.write(`${hand.name} ${chalk.red('busts')}`
        + ` with ${color(hand.cards.join())} (${total})`);
       this.write(`${otherHand.name} ${chalk.green('wins')}`
@@ -63,32 +67,51 @@ class Pontoon extends VersusComputer {
     return true;
   }
 
-  twist() {
-    this.playerHand.push(this.deck.topCard);
-  }
-
-  stick() {
-    this.playerHand.stuck = true;
-    if (Deck.score(this.computerHand.cards) < 16) {
-      this.write(`${this.computerHand.name} has decided to twist`);
-      this.computerHand.push(this.deck.topCard);
-    } else {
-      this.playerHand.stuck = true;
-      this.write(`${this.computerHand.name} has decided to stick`);
-    }
+  /**
+   * Provide the hand with a card from the deck
+   * @param {Hand}
+   */
+  twist(hand) {
+    hand.push(this.deck.topCard);
   }
 
   /**
-   * Asks the player if they would like to stick with their current cards, or
-   * be given another one from the deck
+   * Flags the hand as stuck
    */
-  stickOrTwist() {
-    this.repl.question(`Stick or twist with ${color(this.playerHand.cards.join())}`
-     + ` (${Deck.score(this.playerHand.cards)})?\n>`, (answer) => {
-      if (answer.match(/^$|^[tT]/)) {
-        this.twist();
+  stick(hand) {
+    hand.stuck = true;
+    this.write(`${hand.name} has decided to stick`);
+  }
+
+  /**
+   * Asks the player if they would like to stick with their current cards,
+   * or be given another one from the deck
+   */
+  stickOrTwist(hand) {
+    if (this.hands.every((h) => h.stuck)) {
+      // TODO improve 'both stuck' log messages
+      const otherHand = this.otherHands(hand)[0];
+      this.write(`${hand.name} scored ${Deck.score(hand.cards)}`
+      + ` ${otherHand.name} scored ${Deck.score(otherHand.cards)}`);
+      this.playAgain();
+    }
+    if (hand.name.match(/Computer/g)) {
+      if (Deck.score(hand.cards) < 16) {
+        this.write(`${hand.name} decided to twist`);
+        this.twist(hand);
       } else {
-        this.stick();
+        this.stick(hand);
+        this.stickOrTwist(this.otherHands(hand)[0]);
+      }
+      return;
+    }
+    this.repl.question(`Stick or twist with ${color(hand.cards.join())}`
+     + ` (${Deck.score(hand.cards)})?\n>`, (answer) => {
+      if (answer.match(/^$|^[tT]/)) {
+        this.twist(hand);
+      } else {
+        this.stick(hand);
+        this.stickOrTwist(this.otherHands(hand)[0]);
       }
     });
   }

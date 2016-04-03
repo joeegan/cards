@@ -11,14 +11,22 @@ export default class VersusComputer extends Game {
     this.playerHand.name = chalk.blue(this.playerHand.name);
     this.computerHand.name = chalk.gray(this.computerHand.name);
     this.playerHand.on('log', this.write.bind(this));
-    this.playerHand.on('recievedCard', this.handleCardRecieved.bind(this));
+    this.playerHand.on('recievedCard',
+      this.handleCardRecieved.bind(this, this.playerHand, this.computerHand));
     this.computerHand.on('log', this.write.bind(this));
-    this.computerHand.on('recievedCard', this.handleCardRecieved.bind(this));
+    this.computerHand.on('recievedCard',
+      this.handleCardRecieved.bind(this, this.computerHand, this.playerHand));
     this.begin();
   }
 
   handleCardRecieved() {
-    throw Error('this must be overidden');
+    throw Error('handleCardRecieved must be overidden');
+  }
+
+  begin() {
+    super.begin();
+    this.computerHand.empty();
+    this.playerHand.empty();
   }
 
 }

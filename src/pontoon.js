@@ -15,12 +15,13 @@ class Pontoon extends VersusComputer {
 
   /**
   * @param {string[]} hand
+  * @param {string[]} otherHand
   */
-  handleCardRecieved(hand) {
+  handleCardRecieved(hand, otherHand) {
     if (hand.cards.length < 2) {
       return;
     }
-    if (this.stillInPlay(hand, this.playerHand)) {
+    if (this.stillInPlay(hand, otherHand)) {
       this.queue.push(this.stickOrTwist);
     } else {
       this.queue.push(this.playAgain);
@@ -62,6 +63,21 @@ class Pontoon extends VersusComputer {
     return true;
   }
 
+  twist() {
+    this.playerHand.push(this.deck.topCard);
+  }
+
+  stick() {
+    this.playerHand.stuck = true;
+    if (Deck.score(this.computerHand.cards) < 16) {
+      this.write(`${this.computerHand.name} has decided to twist`);
+      this.computerHand.push(this.deck.topCard);
+    } else {
+      this.playerHand.stuck = true;
+      this.write(`${this.computerHand.name} has decided to stick`);
+    }
+  }
+
   /**
    * Asks the player if they would like to stick with their current cards, or
    * be given another one from the deck
@@ -70,32 +86,9 @@ class Pontoon extends VersusComputer {
     this.repl.question(`Stick or twist with ${color(this.playerHand.cards.join())}`
      + ` (${Deck.score(this.playerHand.cards)})?\n>`, (answer) => {
       if (answer.match(/^$|^[tT]/)) {
-        this.playerHand.push(this.deck.topCard);
-        if (this.stillInPlay(this.playerHand, this.computerHand)) {
-          this.computerHand.push(this.deck.topCard);
-          this.queue.push(this.stickOrTwist);
-        } else {
-          this.playAgain();
-        }
-      } else { // stick
-        this.playerHand.stuck = true;
-        if (Deck.score(this.computerHand.cards) < 16) {
-          this.write(`${this.computerHand.name} has decided to twist`);
-          this.computerHand.push(this.deck.topCard);
-          if (this.stillInPlay(this.computerHand, this.playerHand)) {
-            this.queue.push(this.stickOrTwist);
-          } else {
-            this.playAgain();
-          }
-        } else {
-          this.playerHand.stuck = true;
-          this.write(`${this.computerHand.name} has decided to stick`);
-          if (this.stillInPlay(this.computerHand, this.playerHand)) {
-            this.queue.push(this.stickOrTwist);
-          } else {
-            this.playAgain();
-          }
-        }
+        this.twist();
+      } else {
+        this.stick();
       }
     });
   }

@@ -1,14 +1,12 @@
-import repl from 'repl';
-import { Log } from './log';
+import EventEmitter from 'events';
 import Deck from './deck';
 import chalk from 'chalk';
 import Hand from './hand';
-import Queue from './queue';
 
 /**
  * Common functionality for text based card game
  */
-export default class Game {
+export default class Game extends EventEmitter {
 
   /**
    * Sets up the tools required for the text based game
@@ -16,16 +14,9 @@ export default class Game {
    * @param {string[]} Names of the players e.g. 'You', 'Computer'
    */
   constructor(name, playerNames) {
+    super();
     this.name = name;
     this.playerNames = playerNames;
-    this.repl = repl.start({
-      prompt: `${this.name}> `,
-      input: process.stdin,
-      output: process.stdout,
-    });
-    this.log = new Log(this.repl);
-    this.queue = new Queue(this);
-    this.begin();
   }
 
   /**
@@ -35,7 +26,9 @@ export default class Game {
     this.hands = this.playerNames.map((name) => new Hand(name));
     this.hands.forEach((hand) => {
       hand.name = chalk.blue(hand.name);
-      hand.on('log', this.write.bind(this));
+      hand.on('log', (msg) => {
+        this.emit('msg', msg);
+      });
       hand.on('recievedCard',
         this.handleCardRecieved.bind(this, hand, this.otherHands(hand)));
     });
@@ -43,7 +36,7 @@ export default class Game {
     this.deck = new Deck();
     this.deck.riffleShuffle(1000);
 
-    this.write(chalk.green(`Welcome to ${this.name}.`));
+    this.emit('msg', chalk.green(`Welcome to ${this.name}.`));
   }
 
   /**
@@ -55,24 +48,16 @@ export default class Game {
   }
 
   /**
-   * Writes a message to the repl
-   * @param {string} msg
-   */
-  write(msg) {
-    this.queue.push(this.log.writeLine.bind(this.log, msg));
-  }
-
-  /**
    * Poses the question of whether the player would like to play another game
    */
   playAgain() {
-    this.write(`Play again? (${chalk.green('yes')} or ${chalk.red('no')})`);
-    this.repl.question('', (answer) => {
+    const msg = `Play again? (${chalk.green('yes')} or ${chalk.red('no')})`;
+    this.emit('question', msg, (answer) => {
       if (answer.match(/^$|^[yY]/)) {
-        Game.clear();
+        this.emit('reset');
         this.begin();
       } else {
-        this.repl.close();
+        this.emit('finish');
       }
     });
   }
@@ -84,13 +69,6 @@ export default class Game {
    */
   otherHands(hand) {
     return this.hands.filter((h) => h.name !== hand.name);
-  }
-
-  /**
-   * Clears out the repl so the player feels like they are starting a new game
-   */
-  static clear() {
-    process.stdout.write('\u001B[2J\u001B[0;0f');
   }
 
 }

@@ -23,9 +23,9 @@ class Pontoon extends Game {
       return;
     }
     if (this.stillInPlay(hand, otherHands[0])) {
-      this.queue.push(this.stickOrTwist.bind(this, hand));
+      this.stickOrTwist(hand);
     } else {
-      this.queue.push(this.playAgain);
+      this.playAgain();
     }
   }
 
@@ -51,15 +51,15 @@ class Pontoon extends Game {
   stillInPlay(hand, otherHand) {
     const total = Deck.score(hand.cards);
     if (total === 21) {
-      this.write(`${hand.name} got 21! :triumph:`);
-      this.write(`${hand.name} ${chalk.green('won the game')}`
+      this.emit('msg', `${hand.name} got 21! :triumph:`);
+      this.emit('msg', `${hand.name} ${chalk.green('won the game')}`
        + ` with ${color(hand.cards.join())}`);
       return false;
     }
     if (total > 21) {
-      this.write(`${hand.name} ${chalk.red('busts')}`
+      this.emit('msg', `${hand.name} ${chalk.red('busts')}`
        + ` with ${color(hand.cards.join())} (${total})`);
-      this.write(`${otherHand.name} ${chalk.green('wins')}`
+      this.emit('msg', `${otherHand.name} ${chalk.green('wins')}`
        + ` with ${color(otherHand.cards.join())} (${Deck.score(otherHand.cards)})`);
       return false;
     }
@@ -80,7 +80,7 @@ class Pontoon extends Game {
    */
   stick(hand) {
     hand.stuck = true;
-    this.write(`${hand.name} has decided to stick`);
+    this.emit('msg', `${hand.name} has decided to stick`);
   }
 
   /**
@@ -91,13 +91,13 @@ class Pontoon extends Game {
     if (this.hands.every((h) => h.stuck)) {
       // TODO improve 'both stuck' log messages
       const otherHand = this.otherHands(hand)[0];
-      this.write(`${hand.name} scored ${Deck.score(hand.cards)}`
+      this.emit('msg', `${hand.name} scored ${Deck.score(hand.cards)}`
       + ` ${otherHand.name} scored ${Deck.score(otherHand.cards)}`);
       this.playAgain();
     }
     if (hand.name.match(/Computer/g)) {
       if (Deck.score(hand.cards) < 16) {
-        this.write(`${hand.name} decided to twist`);
+        this.emit('msg', `${hand.name} decided to twist`);
         this.twist(hand);
       } else {
         this.stick(hand);
@@ -105,8 +105,9 @@ class Pontoon extends Game {
       }
       return;
     }
-    this.repl.question(`Stick or twist with ${color(hand.cards.join())}`
-     + ` (${Deck.score(hand.cards)})?\n>`, (answer) => {
+    const msg = `Stick or twist with ${color(hand.cards.join())}`
+     + ` (${Deck.score(hand.cards)})?\n>`;
+    this.emit('question', msg, (answer) => {
       if (answer.match(/^$|^[tT]/)) {
         this.twist(hand);
       } else {
@@ -118,4 +119,4 @@ class Pontoon extends Game {
 
 }
 
-module.exports = new Pontoon();
+module.exports = Pontoon;

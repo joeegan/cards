@@ -6,6 +6,5 @@ module.exports = {
   ],
   "rules": {
     "no-param-reassign": ["error", { "props": false }],
-    "no-use-before-define": 1,
   },
 };
